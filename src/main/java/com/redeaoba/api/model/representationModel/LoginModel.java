@@ -2,7 +2,7 @@ package com.redeaoba.api.model.representationModel;
 
 import java.io.Serializable;
 
-public class loginModel implements Serializable {
+public class LoginModel implements Serializable {
 
     private String senhaAntiga;
     private String senhaNova;

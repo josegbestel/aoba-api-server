@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.redeaoba.api.model.enums.AuthType;
-import com.redeaoba.api.model.representationModel.loginModel;
+import com.redeaoba.api.model.representationModel.LoginModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -101,7 +100,7 @@ public class Usuario implements Serializable {
         this.authType = authType;
     }
 
-    public void updateSenha(loginModel loginModel) {
+    public void updateSenha(LoginModel loginModel) {
         if(this.getSenha().equals(loginModel.getSenhaAntiga())){
             this.setSenha(loginModel.getSenhaNova());
         }

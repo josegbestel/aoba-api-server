@@ -4,13 +4,11 @@ import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.Comerciante;
 import com.redeaoba.api.model.enums.AuthType;
-import com.redeaoba.api.model.representationModel.loginModel;
+import com.redeaoba.api.model.representationModel.LoginModel;
 import com.redeaoba.api.repository.ComercianteRepository;
 import com.redeaoba.api.util.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ComercianteService {
@@ -40,9 +38,15 @@ public class ComercianteService {
                 .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
     }
 
+    //read by email
+    public Comerciante readByEmail(String email){
+        return comercianteRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+    }
+
 
     //update password
-    public void updatePassword(Long id, loginModel loginModel){
+    public void updatePassword(Long id, LoginModel loginModel){
         Comerciante comerciante = comercianteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
         comerciante.updateSenha(loginModel);
