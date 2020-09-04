@@ -117,14 +117,6 @@ public class Anuncio implements Serializable {
         this.qtdeMax = qtdeMax;
     }
 
-    public List<ItemCarrinho> getItensCarrinho() {
-        return itensCarrinho;
-    }
-
-    public void setItensCarrinho(List<ItemCarrinho> itensCarrinho) {
-        this.itensCarrinho = itensCarrinho;
-    }
-
     public List<String> getFotos() {
         return fotos;
     }
