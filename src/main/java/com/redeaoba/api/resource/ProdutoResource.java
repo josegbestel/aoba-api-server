@@ -42,6 +42,13 @@ public class ProdutoResource {
         return ResponseEntity.ok(produtoService.read(id));
     }
 
+    //LER TODOS
+    @GetMapping
+    @ApiOperation("Obtem todos os produtos cadatrados")
+    public ResponseEntity<List<Produto>> getAll(){
+        return ResponseEntity.ok(produtoService.readAll());
+    }
+
     //LER POR CATEGORIA
     @GetMapping("/categoria/{id}")
     @ApiOperation("Obtem uma lista de produtos a partir do ID de uma categoria. Ex: maça")

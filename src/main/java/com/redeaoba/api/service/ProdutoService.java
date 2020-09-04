@@ -127,4 +127,8 @@ public class ProdutoService {
         throw new NotFoundException("Produto não encontrado");
 
     }
+
+    public List<Produto> readAll() {
+        return produtoRepository.findAll();
+    }
 }
