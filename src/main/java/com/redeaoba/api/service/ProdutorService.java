@@ -4,6 +4,7 @@ import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.Produto;
 import com.redeaoba.api.model.Produtor;
+import com.redeaoba.api.model.enums.AuthType;
 import com.redeaoba.api.model.representationModel.loginModel;
 import com.redeaoba.api.repository.ProdutorRepository;
 import com.redeaoba.api.util.PasswordEncoder;
@@ -31,6 +32,7 @@ public class ProdutorService {
         checkDuplicity(produtor);
 
         produtor.setSenha(PasswordEncoder.encode(produtor.getSenha()));
+        produtor.setAuthType(AuthType.USER);
         return produtorRepository.save(produtor);
     }
 

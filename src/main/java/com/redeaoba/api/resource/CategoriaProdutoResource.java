@@ -28,7 +28,7 @@ public class CategoriaProdutoResource {
     }
 
     //CADASTRAR EM MASSA
-    @PostMapping("/em-massa")
+    @PostMapping("/lote")
     @ApiOperation("Cadastra em massa")
     public ResponseEntity<List<CategoriaProduto>> cadastrarEmMassa(@RequestBody List<@Valid CategoriaProduto> categorias){
         return ResponseEntity.ok(categoriaProdutoService.create(categorias));

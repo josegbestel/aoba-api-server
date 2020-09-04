@@ -3,6 +3,7 @@ package com.redeaoba.api.service;
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.Comerciante;
+import com.redeaoba.api.model.enums.AuthType;
 import com.redeaoba.api.model.representationModel.loginModel;
 import com.redeaoba.api.repository.ComercianteRepository;
 import com.redeaoba.api.util.PasswordEncoder;
@@ -29,6 +30,7 @@ public class ComercianteService {
         checkDuplicity(comerciante);
 
         comerciante.setSenha(PasswordEncoder.encode(comerciante.getSenha()));
+        comerciante.setAuthType(AuthType.USER);
         return comercianteRepository.save(comerciante);
     }
 
