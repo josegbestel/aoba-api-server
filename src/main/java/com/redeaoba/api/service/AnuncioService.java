@@ -38,8 +38,12 @@ public class AnuncioService {
 
     //CREATE
     public Anuncio create(AnuncioModel anuncioModel){
-        if(anuncioRepository.existsByProdutorIdAndProdutoId(anuncioModel.getProdutorId(), anuncioModel.getProdutoId()))
-           throw new DomainException("Ja existe anuncio com esse produtor e produto");
+        Optional<Anuncio> anuncioExistente = anuncioRepository.findByProdutorIdAndProdutoId(anuncioModel.getProdutorId(), anuncioModel.getProdutoId());
+        if(anuncioExistente.isPresent()){
+            if(anuncioExistente.get().isValido() && anuncioExistente.get().isAtivo()){
+                throw new DomainException("Ja existe anuncio ativo e válido com esse produtor e produto");
+            }
+        }
 
         anuncioModel.setAtivo(true);
         anuncioModel.setDtCriacao(LocalDateTime.now());
@@ -48,6 +52,7 @@ public class AnuncioService {
                 .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
         Produto produto = produtoRepository.findById(anuncioModel.getProdutoId())
                 .orElseThrow(() -> new NotFoundException("Produto não localizado"));
+
         Anuncio anuncio = Anuncio.byModel(anuncioModel, produto, produtor);
         anuncio.setId(0);
 
@@ -66,7 +71,7 @@ public class AnuncioService {
     public List<Anuncio> readByProdutor(Long produtorId){
         Produtor produtor = produtorRepository.findById(produtorId)
                 .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
-        List<Anuncio> anuncios = anuncioRepository.findByProdutorId(produtorId)
+        List<Anuncio> anuncios = anuncioRepository.findByProdutorId(produtor.getId())
                 .orElseThrow(() -> new NotFoundException("Não há anuncios desse produtor"));
 
         return anuncios;

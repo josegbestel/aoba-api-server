@@ -17,4 +17,5 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
 
     Optional<List<Anuncio>> findByDtValidadeGreaterThan(LocalDateTime dtValidade);
 
+    Optional<Anuncio> findByProdutorIdAndProdutoId(Long produtorId, long produtoId);
 }

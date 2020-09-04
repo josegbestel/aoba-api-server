@@ -138,6 +138,7 @@ public class Anuncio implements Serializable {
         anuncio.setQtdeMax(model.getQtdeMax());
         anuncio.setProduto(produto);
         anuncio.setProdutor(produtor);
+        anuncio.setFotos(model.getFotos());
 
         return anuncio;
     }

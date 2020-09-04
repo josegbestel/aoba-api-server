@@ -3,7 +3,9 @@ package com.redeaoba.api.model.representationModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.redeaoba.api.model.Anuncio;
+import com.redeaoba.api.util.StringListConverter;
 
+import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -16,14 +18,15 @@ public class AnuncioModel implements Serializable {
     private Long id;
 
     @NotNull
-    private Long produtoId;
+    private long produtoId;
 
     @NotNull
-    private Long produtorId;
+    private long produtorId;
 
     @NotNull
     private Float valor;
 
+    @Convert(converter = StringListConverter.class)
     private List<String> fotos;
 
     @NotNull
@@ -46,11 +49,11 @@ public class AnuncioModel implements Serializable {
         this.id = id;
     }
 
-    public Long getProdutoId() {
+    public long getProdutoId() {
         return produtoId;
     }
 
-    public void setProdutoId(Long produtoId) {
+    public void setProdutoId(long produtoId) {
         this.produtoId = produtoId;
     }
 
@@ -120,6 +123,7 @@ public class AnuncioModel implements Serializable {
         model.setValor(anuncio.getValor());
         model.setQtdeMax(anuncio.getQtdeMax());
         model.setAtivo(anuncio.isAtivo());
+        model.setFotos(anuncio.getFotos());
 
         return model;
     }
