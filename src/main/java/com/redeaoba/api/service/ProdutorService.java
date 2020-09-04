@@ -2,16 +2,13 @@ package com.redeaoba.api.service;
 
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
-import com.redeaoba.api.model.Produto;
 import com.redeaoba.api.model.Produtor;
 import com.redeaoba.api.model.enums.AuthType;
-import com.redeaoba.api.model.representationModel.loginModel;
+import com.redeaoba.api.model.representationModel.LoginModel;
 import com.redeaoba.api.repository.ProdutorRepository;
 import com.redeaoba.api.util.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class ProdutorService {
@@ -25,7 +22,6 @@ public class ProdutorService {
         else if(produtorRepository.existsByCodigoRegistro(produtor.getCodigoRegistro()))
             throw new DomainException("Já existe produtor com esse código de registro");
     }
-
 
     //create
     public Produtor create(Produtor produtor){
@@ -42,9 +38,14 @@ public class ProdutorService {
                 .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
     }
 
+    //read by email
+    public Produtor readByEmail(String email){
+        return produtorRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
+    }
 
     //update password
-    public void updatePassword(Long id, loginModel loginModel){
+    public void updatePassword(Long id, LoginModel loginModel){
         Produtor produtor = produtorRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
         produtor.updateSenha(loginModel);
