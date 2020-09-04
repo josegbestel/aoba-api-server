@@ -24,6 +24,8 @@ public class AnuncioModel implements Serializable {
     @NotNull
     private Float valor;
 
+    private List<String> fotos;
+
     @NotNull
     private Integer qtdeMax;
 
@@ -66,6 +68,14 @@ public class AnuncioModel implements Serializable {
 
     public void setValor(Float valor) {
         this.valor = valor;
+    }
+
+    public List<String> getFotos() {
+        return fotos;
+    }
+
+    public void setFotos(List<String> fotos) {
+        this.fotos = fotos;
     }
 
     public Integer getQtdeMax() {
