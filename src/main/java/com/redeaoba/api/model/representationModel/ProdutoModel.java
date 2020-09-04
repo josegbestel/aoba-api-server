@@ -51,7 +51,6 @@ public class ProdutoModel implements Serializable {
         this.foto = foto;
     }
 
-    @JsonIgnore
     public long getCategoriaId() {
         return categoriaId;
     }

@@ -30,7 +30,7 @@ public class ProdutoResource {
     }
 
     //CADASTRAR MASSIVAMENTE
-    @PostMapping("/massivo")
+    @PostMapping("/lote")
     public ResponseEntity<List<Produto>> cadastarMassivamente(@RequestBody List<@Valid ProdutoModel> produtos){
         return ResponseEntity.ok(produtoService.create(produtos));
     }
