@@ -1,6 +1,7 @@
 package com.redeaoba.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.redeaoba.api.model.enums.DiaSemana;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -21,6 +22,12 @@ public class Produtor extends Usuario implements Serializable {
     @NotBlank
     private String descricao;
 
+    @ElementCollection(targetClass = DiaSemana.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name="comerciante_dia_semana")
+    @Column(name="dia_atendimento")
+    private List<DiaSemana> diasAtendimento;
+
     @OneToMany(mappedBy = "produtor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Anuncio> anuncios;
 
@@ -38,5 +45,13 @@ public class Produtor extends Usuario implements Serializable {
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    public List<DiaSemana> getDiasAtendimento() {
+        return diasAtendimento;
+    }
+
+    public void setDiasAtendimento(List<DiaSemana> diasAtendimento) {
+        this.diasAtendimento = diasAtendimento;
     }
 }

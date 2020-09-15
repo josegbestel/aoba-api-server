@@ -2,6 +2,7 @@ package com.redeaoba.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.redeaoba.api.model.enums.DiaSemana;
 import com.redeaoba.api.model.representationModel.AnuncioModel;
 import com.redeaoba.api.util.StringListConverter;
 
@@ -141,6 +142,10 @@ public class Anuncio implements Serializable {
         anuncio.setFotos(model.getFotos());
 
         return anuncio;
+    }
+
+    public List<DiaSemana> getDiasDisponiveis(){
+        return getProdutor().getDiasAtendimento();
     }
 
 }

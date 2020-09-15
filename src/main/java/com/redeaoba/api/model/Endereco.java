@@ -48,6 +48,10 @@ public class Endereco implements Serializable {
     @OneToMany(mappedBy = "endereco", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 
+    @ManyToOne
+    @JoinColumn(name = "comerciante_id")
+    Comerciante comerciante;
+
     public long getId() {
         return id;
     }

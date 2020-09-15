@@ -1,5 +1,7 @@
 package com.redeaoba.api.model;
 
+import com.redeaoba.api.model.enums.OpcaoAlternativa;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -14,7 +16,7 @@ public class Pedido implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REMOVE})
     private List<ItemCarrinho> itensCarrinho;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -25,9 +27,10 @@ public class Pedido implements Serializable {
     @JoinColumn(name = "endereco_id", nullable = false)
     private Endereco endereco;
 
-    private float taxaServico;
     private float valorFrete;
-    private float valorTotal;
+
+    @Enumerated(EnumType.STRING)
+    private OpcaoAlternativa opcaoAlternativa;
 
     public long getId() {
         return id;
@@ -61,14 +64,6 @@ public class Pedido implements Serializable {
         this.endereco = endereco;
     }
 
-    public float getTaxaServico() {
-        return taxaServico;
-    }
-
-    public void setTaxaServico(float taxaServico) {
-        this.taxaServico = taxaServico;
-    }
-
     public float getValorFrete() {
         return valorFrete;
     }
@@ -77,11 +72,11 @@ public class Pedido implements Serializable {
         this.valorFrete = valorFrete;
     }
 
-    public float getValorTotal() {
-        return valorTotal;
+    public OpcaoAlternativa getOpcaoAlternativa() {
+        return opcaoAlternativa;
     }
 
-    public void setValorTotal(float valorTotal) {
-        this.valorTotal = valorTotal;
+    public void setOpcaoAlternativa(OpcaoAlternativa opcaoAlternativa) {
+        this.opcaoAlternativa = opcaoAlternativa;
     }
 }

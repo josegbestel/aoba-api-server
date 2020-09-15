@@ -2,6 +2,7 @@ package com.redeaoba.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.redeaoba.api.model.enums.DiaSemana;
 import com.redeaoba.api.model.representationModel.ProdutoModel;
 
 import javax.persistence.*;

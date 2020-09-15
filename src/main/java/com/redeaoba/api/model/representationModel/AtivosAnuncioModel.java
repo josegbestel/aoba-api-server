@@ -3,6 +3,7 @@ package com.redeaoba.api.model.representationModel;
 import com.redeaoba.api.model.Produtor;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class AtivosAnuncioModel implements Serializable {
 
@@ -10,6 +11,9 @@ public class AtivosAnuncioModel implements Serializable {
     private float valor;
     private int qtdeMax;
     private Produtor produtor;
+
+    //TODO: Implementar fotos
+    private List<String> fotos;
 
     public Long getId() {
         return id;

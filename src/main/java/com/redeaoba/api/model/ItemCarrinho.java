@@ -27,8 +27,7 @@ public class ItemCarrinho implements Serializable {
     @NotNull
     private StatusItem status;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "pedido_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Pedido pedido;
 
     public float getValorTotal(){
@@ -65,5 +64,13 @@ public class ItemCarrinho implements Serializable {
 
     public void setStatus(StatusItem status) {
         this.status = status;
+    }
+
+    private Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 }

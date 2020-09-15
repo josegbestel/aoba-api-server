@@ -60,7 +60,7 @@ public class AnuncioResource {
     }
 
     //ATUALIZAR QTDE
-    @PutMapping("/{id}/qtde/{qtde")
+    @PutMapping("/{id}/qtde/{qtde}")
     public ResponseEntity<Anuncio> atualizarQtde(@PathVariable(value = "id") Long id,
                                                  @PathVariable(value = "qtde") int qtde){
         return ResponseEntity.ok(anuncioService.updateQtde(id, qtde));

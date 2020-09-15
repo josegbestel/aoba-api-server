@@ -18,9 +18,9 @@ public class ComercianteService {
 
     private void checkDuplicity(Comerciante comerciante){
         if(comercianteRepository.existsByEmail(comerciante.getEmail()))
-            throw new DomainException("Já existe produtor com esse email");
+            throw new DomainException("Já existe comerciante com esse email");
         else if(comercianteRepository.existsByCnpj(comerciante.getCnpj()))
-            throw new DomainException("Já existe produtor com esse código de registro");
+            throw new DomainException("Já existe comerciante com esse código de registro");
     }
 
     //create
