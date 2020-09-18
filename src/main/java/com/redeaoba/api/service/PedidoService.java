@@ -1,9 +1,12 @@
 package com.redeaoba.api.service;
 
+import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.*;
+import com.redeaoba.api.model.representationModel.ItemCarrinhoLiteModel;
 import com.redeaoba.api.model.representationModel.ItemCarrinhoModel;
 import com.redeaoba.api.model.representationModel.PedidoModel;
+import com.redeaoba.api.model.representationModel.PedidoTempModel;
 import com.redeaoba.api.repository.AnuncioRepository;
 import com.redeaoba.api.repository.ComercianteRepository;
 import com.redeaoba.api.repository.EnderecoRepository;
@@ -29,6 +32,36 @@ public class PedidoService {
     @Autowired
     AnuncioRepository anuncioRepository;
 
+    //Montar carrinho
+    public PedidoTempModel rideCart(PedidoModel pedidoModel){
+        Comerciante comerciante = comercianteRepository.findById(pedidoModel.getCompradorId())
+                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+        Endereco endereco = enderecoRepository.findById(pedidoModel.getEnderecoId())
+                .orElseThrow(() -> new NotFoundException("Endereço não localizado"));
+
+        //Instanciar todos os itens
+        List<ItemCarrinho> itens = new ArrayList<>();
+        for(ItemCarrinhoLiteModel item : pedidoModel.getItensCarrinho()) {
+            Anuncio anuncio = anuncioRepository.findById(item.getAnuncioId())
+                    .orElseThrow(() -> new NotFoundException("Anúncio " + item.getAnuncioId() + " não localizado"));
+
+            //Validar se tem essa quantidade disponível
+            if (anuncio.getQtdeMax() < item.getQuantidade()) {
+                throw new DomainException("Quantidade do item" + anuncio.getProduto().getNome() + " está superior à disponível");
+            }
+            itens.add(item.byModel(anuncio));
+        }
+
+        Pedido pedido = pedidoModel.byModel(comerciante, endereco, itens);
+        return PedidoTempModel.toModel(pedido);
+
+        /*
+        TODO
+        - Implementar método de calcular frete no pedido
+        - Implementar método toModel no PedidoTempModel
+         */
+    }
+
 
     //Criar
     public Pedido create(PedidoModel pedidoModel){
@@ -37,10 +70,16 @@ public class PedidoService {
         Endereco endereco = enderecoRepository.findById(pedidoModel.getEnderecoId())
                 .orElseThrow(() -> new NotFoundException("Endereço não localizado"));
 
+        //Instanciar todos os itens
         List<ItemCarrinho> itens = new ArrayList<>();
-        for(ItemCarrinhoModel item : pedidoModel.getItensCarrinho()){
+        for(ItemCarrinhoLiteModel item : pedidoModel.getItensCarrinho()){
             Anuncio anuncio = anuncioRepository.findById(item.getAnuncioId())
                     .orElseThrow(() -> new NotFoundException("Anúncio "+ item.getAnuncioId() +" não localizado"));
+
+            //Validar se tem essa quantidade disponível
+            if(anuncio.getQtdeMax() < item.getQuantidade()){
+                throw new DomainException("Quantidade do item" + anuncio.getProduto().getNome() + " está superior à disponível");
+            }
             itens.add(item.byModel(anuncio));
         }
 

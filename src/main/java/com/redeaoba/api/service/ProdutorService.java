@@ -2,6 +2,7 @@ package com.redeaoba.api.service;
 
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
+import com.redeaoba.api.model.Endereco;
 import com.redeaoba.api.model.Produtor;
 import com.redeaoba.api.model.enums.AuthType;
 import com.redeaoba.api.model.representationModel.LoginModel;
@@ -9,6 +10,8 @@ import com.redeaoba.api.repository.ProdutorRepository;
 import com.redeaoba.api.util.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ProdutorService {

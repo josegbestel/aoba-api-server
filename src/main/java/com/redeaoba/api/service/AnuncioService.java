@@ -121,11 +121,7 @@ public class AnuncioService {
                                 for(Anuncio anuncio : anuncios.get()){
                                     //VERIFICAR SE ESTÁ NA VALIDADE E ATIVO
                                     if (anuncio.isAtivo() && anuncio.isValido()){
-                                        AtivosAnuncioModel ativosAnuncioModel = new AtivosAnuncioModel();
-                                        ativosAnuncioModel.setId(anuncio.getId());
-                                        ativosAnuncioModel.setValor(anuncio.getValor());
-                                        ativosAnuncioModel.setQtdeMax(anuncio.getQtdeMax());
-                                        ativosAnuncioModel.setProdutor(anuncio.getProdutor());
+                                        AtivosAnuncioModel ativosAnuncioModel = AtivosAnuncioModel.toModel(anuncio);
                                         anunciosModel.add(ativosAnuncioModel);
                                     }
                                 }

@@ -1,6 +1,7 @@
 package com.redeaoba.api.resource;
 
 import com.redeaoba.api.model.Comerciante;
+import com.redeaoba.api.model.Endereco;
 import com.redeaoba.api.model.representationModel.LoginModel;
 import com.redeaoba.api.service.ComercianteService;
 import io.swagger.annotations.Api;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/comerciante")
@@ -50,6 +52,23 @@ public class ComercianteResource {
     public ResponseEntity<Object> editarSenha(@PathVariable(value = "id")Long id,
                                               @Valid @RequestBody LoginModel login){
         comercianteService.updatePassword(id, login);
+        return ResponseEntity.noContent().build();
+    }
+
+    //ADICIONAR ENDERECO
+    @PostMapping("/{id}/endereco")
+    @ApiOperation("Adiciona um endereço no comerciante")
+    public ResponseEntity<List<Endereco>> adicionarSenha(@PathVariable(value = "id")Long id,
+                                                         @Valid @RequestBody Endereco endereco){
+        return ResponseEntity.ok(comercianteService.createEndereco(id, endereco));
+    }
+
+    //delete endereco
+    @DeleteMapping("/{id}/endereco/{enderecoId}")
+    @ApiOperation("Remove um endereço do comerciante")
+    public ResponseEntity<Object> removerEndereco(@PathVariable(value = "id")Long id,
+                                                  @PathVariable(value = "enderecoId")Long enderecoId){
+        comercianteService.deleteEndereco(id, enderecoId);
         return ResponseEntity.noContent().build();
     }
 

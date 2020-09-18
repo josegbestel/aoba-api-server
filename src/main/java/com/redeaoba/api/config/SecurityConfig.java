@@ -36,6 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(AUTH_WHITELIST).permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/comerciante").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1/produtor").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/anuncio/validos").permitAll()
                 .antMatchers("/**").authenticated()
                 .and()
                 .httpBasic()

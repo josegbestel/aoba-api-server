@@ -4,6 +4,7 @@ import com.redeaoba.api.model.enums.OpcaoAlternativa;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.text.DecimalFormat;
 import java.util.List;
 
 @Entity
@@ -78,5 +79,22 @@ public class Pedido implements Serializable {
 
     public void setOpcaoAlternativa(OpcaoAlternativa opcaoAlternativa) {
         this.opcaoAlternativa = opcaoAlternativa;
+    }
+
+    public float getValorTotal() {
+        float vlrTotal = 0;
+        for(ItemCarrinho i : this.getItensCarrinho()){
+            float vlrUnitario = i.getAnuncio().getValor();
+            float qtde = i.getQuantidade();
+            vlrTotal += (vlrUnitario * qtde);
+        }
+
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+
+        String number = df.format(vlrTotal);
+        vlrTotal = Float.parseFloat(number.replace(",", "."));
+
+        return vlrTotal;
     }
 }

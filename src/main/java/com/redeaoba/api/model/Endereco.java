@@ -16,26 +16,23 @@ public class Endereco implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @NotNull
+    @NotBlank
+    private String cep;
+
     @NotBlank
     private String logradouro;
 
     @NotNull
     private int numero;
 
-    @NotNull
-    @NotBlank
     private String complemento;
 
-    @NotNull
     @NotBlank
     private String bairro;
 
-    @NotNull
     @NotBlank
     private String cidade;
 
-    @NotNull
     @NotBlank
     private String uf;
 
@@ -58,6 +55,14 @@ public class Endereco implements Serializable {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
     }
 
     public String getLogradouro() {

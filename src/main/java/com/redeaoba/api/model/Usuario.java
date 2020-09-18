@@ -105,4 +105,9 @@ public class Usuario implements Serializable {
             this.setSenha(loginModel.getSenhaNova());
         }
     }
+
+    //TODO: Implementar metodo que faça a média das avaliações
+    public float getRating(){
+        return -1;
+    }
 }

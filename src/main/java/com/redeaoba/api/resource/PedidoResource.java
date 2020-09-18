@@ -2,6 +2,7 @@ package com.redeaoba.api.resource;
 
 import com.redeaoba.api.model.Pedido;
 import com.redeaoba.api.model.representationModel.PedidoModel;
+import com.redeaoba.api.model.representationModel.PedidoTempModel;
 import com.redeaoba.api.service.PedidoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,11 +22,17 @@ public class PedidoResource {
     @Autowired
     PedidoService pedidoService;
 
+    @GetMapping("/carrinho")
+    @ApiOperation("Requisita os itens, comprador e endereço e a API retorna um item completo com as infos do carrinho")
+    public ResponseEntity<PedidoTempModel> criarCarrinho(@Valid @RequestBody PedidoModel pedidoModel){
+        return ResponseEntity.ok(pedidoService.rideCart(pedidoModel));
+    }
+
     //Criar pedido
     @PostMapping
     @ApiOperation("Cria um pedido")
-    public ResponseEntity<Pedido> criarPedido(@Valid @RequestBody PedidoModel pedido){
-        return ResponseEntity.ok(pedidoService.create(pedido));
+    public ResponseEntity<Pedido> criarPedido(@Valid @RequestBody PedidoModel pedidoModel){
+        return ResponseEntity.ok(pedidoService.create(pedidoModel));
     }
 
     //Obter pedidos por comerciante

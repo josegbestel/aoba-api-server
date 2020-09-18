@@ -1,5 +1,6 @@
 package com.redeaoba.api.model.representationModel;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.redeaoba.api.model.Comerciante;
 import com.redeaoba.api.model.Endereco;
 import com.redeaoba.api.model.ItemCarrinho;
@@ -8,6 +9,7 @@ import com.redeaoba.api.model.enums.OpcaoAlternativa;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoModel implements Serializable {
@@ -19,12 +21,11 @@ public class PedidoModel implements Serializable {
     private long enderecoId;
 
     @NotNull
-    private List<ItemCarrinhoModel> itensCarrinho;
+    private List<ItemCarrinhoLiteModel> itensCarrinho;
 
     @NotNull
     private float valorFrete;
 
-    @NotNull
     private OpcaoAlternativa opcaoAlternativa;
 
     public long getCompradorId() {
@@ -43,11 +44,11 @@ public class PedidoModel implements Serializable {
         this.enderecoId = enderecoId;
     }
 
-    public List<ItemCarrinhoModel> getItensCarrinho() {
+    public List<ItemCarrinhoLiteModel> getItensCarrinho() {
         return itensCarrinho;
     }
 
-    public void setItensCarrinho(List<ItemCarrinhoModel> itensCarrinho) {
+    public void setItensCarrinho(List<ItemCarrinhoLiteModel> itensCarrinho) {
         this.itensCarrinho = itensCarrinho;
     }
 
@@ -55,6 +56,7 @@ public class PedidoModel implements Serializable {
         return valorFrete;
     }
 
+    @JsonIgnore
     public void setValorFrete(float valorFrete) {
         this.valorFrete = valorFrete;
     }
@@ -76,5 +78,19 @@ public class PedidoModel implements Serializable {
         pedido.setItensCarrinho(itens);
 
         return pedido;
+    }
+
+    static public PedidoModel toModel(Pedido pedido){
+        PedidoModel model = new PedidoModel();
+        model.setCompradorId(pedido.getComprador().getId());
+        model.setEnderecoId(pedido.getEndereco().getId());
+        model.setOpcaoAlternativa(pedido.getOpcaoAlternativa());
+        model.setValorFrete(pedido.getValorFrete());
+
+        List<ItemCarrinhoLiteModel> itensModel = new ArrayList<>();
+        pedido.getItensCarrinho().forEach(i -> itensModel.add(ItemCarrinhoLiteModel.byModel(ItemCarrinhoModel.toModel(i))));
+        model.setItensCarrinho(itensModel);
+
+        return model;
     }
 }
