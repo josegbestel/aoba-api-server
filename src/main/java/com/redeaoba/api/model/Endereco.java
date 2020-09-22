@@ -1,5 +1,7 @@
 package com.redeaoba.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -8,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "endereco")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Endereco implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -46,7 +49,7 @@ public class Endereco implements Serializable {
     private List<Pedido> pedidos;
 
     @ManyToOne
-    @JoinColumn(name = "comerciante_id")
+//    @JoinColumn(name = "comerciante_id")
     Comerciante comerciante;
 
     public long getId() {

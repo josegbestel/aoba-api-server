@@ -1,6 +1,7 @@
 package com.redeaoba.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.redeaoba.api.model.enums.DiaSemana;
 import org.hibernate.validator.constraints.br.CNPJ;
 
@@ -13,13 +14,15 @@ import java.util.List;
 
 @Entity
 @Table(name = "comerciante")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Comerciante extends Usuario implements Serializable {
 
     @CNPJ
     @NotBlank
     private String cnpj;
 
-    @OneToMany(mappedBy = "comerciante", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @OneToMany(mappedBy = "comerciante", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REMOVE})
     List<Endereco> enderecos = new ArrayList<>();
 
     @OneToMany(mappedBy = "comprador", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
