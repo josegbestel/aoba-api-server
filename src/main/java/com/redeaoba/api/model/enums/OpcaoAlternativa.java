@@ -3,8 +3,8 @@ package com.redeaoba.api.model.enums;
 public enum OpcaoAlternativa {
 
     ACEITAR_SUGESTAO,
-    CANCELAR_PRODUTO,
-    CANCELAR_PEDIDO;
+    CANCELAR_PRODUTO;
+//    CANCELAR_PEDIDO;
 
     private String opcao;
 

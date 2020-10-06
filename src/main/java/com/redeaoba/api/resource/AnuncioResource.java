@@ -25,14 +25,14 @@ public class AnuncioResource {
 
     //CRIAR
     @PostMapping
-    @ApiOperation("Cria um anuncio. Não inserir o ID")
+    @ApiOperation("Cria um anuncio. ** Não inserir o ID ** ")
     public ResponseEntity<Anuncio> criar(@RequestBody @Valid AnuncioModel anuncioModel){
         return ResponseEntity.ok(anuncioService.create(anuncioModel));
     }
 
     //LER POR ID
     @GetMapping("/{id}")
-    @ApiOperation("Obtem um anuncio pelo ID")
+    @ApiOperation("Obtem um anuncio pelo ID do anúncio")
     public ResponseEntity<Anuncio> obterPorId(@PathVariable(value = "id") Long id){
         return ResponseEntity.ok(anuncioService.read(id));
     }
@@ -51,20 +51,30 @@ public class AnuncioResource {
         return ResponseEntity.ok(anuncioService.readAnunciosAtivos());
     }
 
-    //DECREMENTAR QTDE
-    @PutMapping("/{id}/decrementar-qtde/{qtde}")
-    @ApiOperation("Diminui a quantidade de um anuncio")
-    public ResponseEntity<Anuncio> decrementarQtde(@PathVariable(value = "id") Long id,
-                                                   @PathVariable(value = "qtde") int qtde){
-        return ResponseEntity.ok(anuncioService.decrementQtde(id, qtde));
+    @PutMapping("/{id}")
+    @ApiOperation("Edita a quantidade e valor de um anúncio já criado pelo ID do anúncio. " +
+            "Se editar o valor, o anuncio atual será desativado e criará um novo")
+    public ResponseEntity<Object> editarAnuncio(@PathVariable(value = "id") Long id,
+                                                @RequestParam(value = "qtde", required = false, defaultValue = "0") int qtde,
+                                                @RequestParam(value = "valor", required = false, defaultValue = "0.0") float valor){
+        anuncioService.updateAnuncio(id, qtde, valor);
+        return ResponseEntity.noContent().build();
     }
 
-    //ATUALIZAR QTDE
-    @PutMapping("/{id}/qtde/{qtde}")
-    public ResponseEntity<Anuncio> atualizarQtde(@PathVariable(value = "id") Long id,
-                                                 @PathVariable(value = "qtde") int qtde){
-        return ResponseEntity.ok(anuncioService.updateQtde(id, qtde));
-    }
+//    //DECREMENTAR QTDE
+//    @PutMapping("/{id}/decrementar-qtde/{qtde}")
+//    @ApiOperation("Diminui a quantidade de um anuncio")
+//    public ResponseEntity<Anuncio> decrementarQtde(@PathVariable(value = "id") Long id,
+//                                                   @PathVariable(value = "qtde") int qtde){
+//        return ResponseEntity.ok(anuncioService.decrementQtde(id, qtde));
+//    }
+
+//    //ATUALIZAR QTDE
+//    @PutMapping("/{id}/qtde/{qtde}")
+//    public ResponseEntity<Anuncio> atualizarQtde(@PathVariable(value = "id") Long id,
+//                                                 @PathVariable(value = "qtde") int qtde){
+//        return ResponseEntity.ok(anuncioService.updateQtde(id, qtde));
+//    }
 
     //ATUALIZAR VENCIMENTO
     @PutMapping("/{id}/vencimento")

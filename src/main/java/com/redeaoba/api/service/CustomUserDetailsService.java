@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException{
         Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario não identificado"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario nao identificado"));
 
         List<GrantedAuthority> authorityListAdmin = AuthorityUtils.createAuthorityList("USER", "ADMIN");
         List<GrantedAuthority> authorityListUser = AuthorityUtils.createAuthorityList("USER");

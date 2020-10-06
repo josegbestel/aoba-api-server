@@ -18,10 +18,8 @@ public class ItemCarrinhoModel implements Serializable {
 
     @NotNull
     private long anuncioId;
-
     @NotNull
     private int quantidade;
-
     private String foto;
     private DataEntrega dataEntrega;
     private float valor;

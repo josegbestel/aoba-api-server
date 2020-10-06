@@ -7,6 +7,7 @@ import com.redeaoba.api.model.CategoriaProduto;
 import com.redeaoba.api.model.Produto;
 import com.redeaoba.api.model.Produtor;
 import com.redeaoba.api.model.enums.SecaoProduto;
+import com.redeaoba.api.model.enums.StatusAnuncio;
 import com.redeaoba.api.model.representationModel.*;
 import com.redeaoba.api.repository.AnuncioRepository;
 import com.redeaoba.api.repository.CategoriaProdutoRepository;
@@ -41,7 +42,7 @@ public class AnuncioService {
         Optional<Anuncio> anuncioExistente = anuncioRepository.findByProdutorIdAndProdutoId(anuncioModel.getProdutorId(), anuncioModel.getProdutoId());
         if(anuncioExistente.isPresent()){
             if(anuncioExistente.get().isValido() && anuncioExistente.get().isAtivo()){
-                throw new DomainException("Ja existe anuncio ativo e válido com esse produtor e produto");
+                throw new DomainException("Ja existe anuncio ativo e valido com esse produtor e produto");
             }
         }
 
@@ -49,12 +50,13 @@ public class AnuncioService {
         anuncioModel.setDtCriacao(LocalDateTime.now());
         anuncioModel.setDtValidade(LocalDateTime.now().plusDays(7));
         Produtor produtor = produtorRepository.findById(anuncioModel.getProdutorId())
-                .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
+                .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
         Produto produto = produtoRepository.findById(anuncioModel.getProdutoId())
-                .orElseThrow(() -> new NotFoundException("Produto não localizado"));
+                .orElseThrow(() -> new NotFoundException("Produto nao localizado"));
 
         Anuncio anuncio = Anuncio.byModel(anuncioModel, produto, produtor);
         anuncio.setId(0);
+        anuncio.setStatus(StatusAnuncio.ATIVO);
 
         return anuncioRepository.save(anuncio);
     }
@@ -62,7 +64,7 @@ public class AnuncioService {
     //READ
     public Anuncio read(Long id){
         Anuncio anuncio = anuncioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Anuncio não localizado"));
+                .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
 
         return anuncio;
     }
@@ -70,9 +72,20 @@ public class AnuncioService {
     //READ POR PRODUTOR
     public List<Anuncio> readByProdutor(Long produtorId){
         Produtor produtor = produtorRepository.findById(produtorId)
-                .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
+                .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
         List<Anuncio> anuncios = anuncioRepository.findByProdutorId(produtor.getId())
-                .orElseThrow(() -> new NotFoundException("Não há anuncios desse produtor"));
+                .orElseThrow(() -> new NotFoundException("Nao ha anuncios desse produtor"));
+
+        //Verifica aqueles que estão vencidos e com ativo == true
+        for (Anuncio a : anuncios) {
+            if (a.getStatus() == StatusAnuncio.INATIVO && a.isAtivo() == true){
+                a.setAtivo(false);
+                anuncioRepository.save(a);
+            }
+        }
+
+        //Faz um filtro retirando DESATUALIZADOS e REMOVIDOS
+        anuncios.stream().filter(a -> a.getStatus() != StatusAnuncio.DESATUALIZADO || a.getStatus() != StatusAnuncio.REMOVIDO);
 
         return anuncios;
     }
@@ -119,7 +132,7 @@ public class AnuncioService {
                                 List<AtivosAnuncioModel> anunciosModel = new ArrayList<>();
                                 //ANUNCIO MODEL
                                 for(Anuncio anuncio : anuncios.get()){
-                                    //VERIFICAR SE ESTÁ NA VALIDADE E ATIVO
+                                    //VERIFICAR SE ESTa NA VALIDADE E ATIVO
                                     if (anuncio.isAtivo() && anuncio.isValido()){
                                         AtivosAnuncioModel ativosAnuncioModel = AtivosAnuncioModel.toModel(anuncio);
                                         anunciosModel.add(ativosAnuncioModel);
@@ -150,27 +163,57 @@ public class AnuncioService {
     }
 
     //DECREMENTAR QUANTIDADE
-    public Anuncio decrementQtde(Long id, int qtde){
+    private Anuncio decrementQtde(Long id, int qtde){
         Anuncio anuncio = anuncioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Anuncio não localizado"));
+                .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
 
         anuncio.setQtdeMax(anuncio.getQtdeMax()-qtde);
         return anuncioRepository.save(anuncio);
     }
 
-    //UPDATE QUANTIDADE
-    public Anuncio updateQtde(Long id, int qtde){
-        Anuncio anuncio = anuncioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Anuncio não localizado"));
+    //UPDATE QTDE E VALOR
+    public void updateAnuncio(long id, int qtde, float valor){
+        System.out.println("id: " + id
+                + "\nqtde: " + qtde
+                + "\nvalor: " + valor);
 
-        anuncio.setQtdeMax(qtde);
-        return anuncioRepository.save(anuncio);
+        Anuncio anuncio = anuncioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
+
+        if (qtde == 0.0){
+            throw new DomainException("Valor de qtde invalido");
+        }
+
+        if(valor > 0){
+            //Criar um novo e desativar o antigo
+            Anuncio anuncioNovo = new Anuncio();
+            anuncioNovo.setDtValidade(LocalDateTime.now().plusDays(7));
+            anuncioNovo.setQtdeMax(qtde);
+            anuncioNovo.setValor(valor);
+            anuncioNovo.setAtivo(true);
+            anuncioNovo.setDtCriacao(LocalDateTime.now());
+            anuncioNovo.setFotos(anuncio.getFotos());
+            anuncioNovo.setProduto(anuncio.getProduto());
+            anuncioNovo.setProdutor(anuncio.getProdutor());
+            anuncioNovo.setStatus(StatusAnuncio.ATIVO);
+
+            anuncioRepository.save(anuncioNovo);
+
+            anuncio.setStatus(StatusAnuncio.DESATUALIZADO);
+            anuncioRepository.save(anuncio);
+        }else{
+            //Atualizar o novo
+            anuncio.setQtdeMax(qtde);
+            anuncio.setDtValidade(LocalDateTime.now().plusDays(7));
+
+            anuncioRepository.save(anuncio);
+        }
     }
 
     //UPDATE VENCIMENTO
     public Anuncio updateVencimento(Long id, LocalDateTime validade){
         Anuncio anuncio = anuncioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Anuncio não localizado"));
+                .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
 
         anuncio.setDtValidade(validade);
         return anuncioRepository.save(anuncio);
@@ -179,7 +222,7 @@ public class AnuncioService {
     //DESATIVAR
     public void disable(Long id){
         Anuncio anuncio = anuncioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Anuncio não localizado"));
+                .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
         anuncio.setAtivo(false);
         anuncio.setDtValidade(anuncio.getDtValidade().isAfter(LocalDateTime.now()) ? anuncio.getDtValidade() : LocalDateTime.now());
         anuncioRepository.save(anuncio);
@@ -188,7 +231,7 @@ public class AnuncioService {
     //ATIVAR
     public void enable(Long id){
         Anuncio anuncio = anuncioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Anuncio não localizado"));
+                .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
         anuncio.setAtivo(true);
         anuncio.setDtValidade(LocalDateTime.now().plusDays(7));
         anuncioRepository.save(anuncio);
@@ -196,11 +239,12 @@ public class AnuncioService {
 
     //DELETAR
     public void delete(Long id){
-        if(!anuncioRepository.existsById(id))
-            throw new NotFoundException("Anuncio não localizado");
+        Anuncio anuncio = anuncioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
 
-        anuncioRepository.deleteById(id);
-
+        anuncio.setStatus(StatusAnuncio.REMOVIDO);
+        anuncio.setAtivo(false);
+        anuncioRepository.save(anuncio);
     }
 
 }

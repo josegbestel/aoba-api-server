@@ -1,6 +1,5 @@
 package com.redeaoba.api.service;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.CategoriaProduto;
@@ -29,7 +28,7 @@ public class ProdutoService {
     public Produto create(ProdutoModel produtoModel){
         if(!produtoRepository.existsByNome(produtoModel.getNome())){
             CategoriaProduto categoria = categoriaProdutoRepository.findById(produtoModel.getCategoriaId())
-                    .orElseThrow((() -> new NotFoundException("Categoria não localizada")));
+                    .orElseThrow((() -> new NotFoundException("Categoria nao localizada")));
 
             Produto produto = new Produto();
             produto.setNome(produtoModel.getNome());
@@ -37,7 +36,7 @@ public class ProdutoService {
             produto.setCategoria(categoria);
             return produtoRepository.save(produto);
         }
-        throw new DomainException("Já existe produto com esse nome");
+        throw new DomainException("Ja existe produto com esse nome");
     }
 
     //CREATE MASSIVE
@@ -46,35 +45,45 @@ public class ProdutoService {
 
         for(ProdutoModel pm : produtosModel){
             if(!produtoRepository.existsByNome(pm.getNome())){
-                Optional<CategoriaProduto> categoria = categoriaProdutoRepository.findById(pm.getCategoriaId());
+                Optional<CategoriaProduto> categoria;
+                if(pm.getCategoriaId() == 0)
+                    categoria = categoriaProdutoRepository.findByNome(pm.getCategoriaNome());
+                else
+                    categoria = categoriaProdutoRepository.findById(pm.getCategoriaId());
+
                 if(categoria.isPresent()){
+                    System.out.println("Achou a categoria " + categoria.get().getNome());
                     Produto produto = new Produto();
                     produto.setNome(pm.getNome());
                     produto.setFoto(pm.getFoto());
                     produto.setCategoria(categoria.get());
                     produtos.add(produtoRepository.save(produto));
-                }
+                }else
+                    System.out.println("NÃO achou a categoria "
+                            + pm.getCategoriaNome() + " "
+                            + pm.getCategoriaId() + "("
+                            + pm.getNome() + ")");
             }
         }
         if(produtos.size() != 0)
             return produtos;
 
-        throw new NotFoundException("Nenhum produto foi cadastrado pois estes ja existem no sistema ou a categoria está invalida");
+        throw new NotFoundException("Nenhum produto foi cadastrado pois estes ja existem no sistema ou a categoria esta invalida");
     }
 
     //READ BY ID
     public Produto read(Long id){
         return produtoRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Produto não localizado"));
+                .orElseThrow(() -> new NotFoundException("Produto nao localizado"));
     }
 
     //READ POR CATEGORIA
     public List<ProdutoModel> readByCategoria(Long categoriaId){
         CategoriaProduto categoria = categoriaProdutoRepository.findById(categoriaId)
-                .orElseThrow(() -> new NotFoundException("Categoria não localizada"));
+                .orElseThrow(() -> new NotFoundException("Categoria nao localizada"));
 
         List<Produto> produtos = produtoRepository.findByCategoriaId(categoria.getId())
-                .orElseThrow(() -> new NotFoundException("Produto não localizado"));
+                .orElseThrow(() -> new NotFoundException("Produto nao localizado"));
         List<ProdutoModel> produtosModel = new ArrayList<>();
         produtos.forEach(p -> produtosModel.add(ProdutoModel.toModel(p)));
 
@@ -85,7 +94,7 @@ public class ProdutoService {
     //READ POR SECAO
     public List<ProdutoModel> readBySecao(String secao){
         List<CategoriaProduto> categorias = categoriaProdutoRepository.findBySecao(SecaoProduto.valueOf(secao.toUpperCase()))
-                .orElseThrow(() -> new NotFoundException("Seção não localizada"));
+                .orElseThrow(() -> new NotFoundException("Secao nao localizada"));
 
         List<Produto> allProdutos = new ArrayList<>();
         for(CategoriaProduto categoria : categorias){
@@ -95,7 +104,7 @@ public class ProdutoService {
             }
         }
         if(allProdutos.size() == 0){
-            throw new NotFoundException("Não foi localizada a seção");
+            throw new NotFoundException("Nao foi localizada a secao");
         }
 
         List<ProdutoModel> produtosModel = new ArrayList<>();
@@ -109,10 +118,10 @@ public class ProdutoService {
     //EDITAR PRODUTO
     public Produto edit(Long id, Produto produto){
         if(id != produto.getId()){
-            throw new DomainException("inconsistência na requisição: o ID não bate com o produto enviado");
+            throw new DomainException("inconsistência na requisicao: o ID nao bate com o produto enviado");
         }
         if(!produtoRepository.existsById(id)){
-            throw new NotFoundException("Produto não localizado");
+            throw new NotFoundException("Produto nao localizado");
         }
 
         return produtoRepository.save(produto);
@@ -124,7 +133,7 @@ public class ProdutoService {
         if(produtoRepository.existsById(id))
             produtoRepository.deleteById(id);
 
-        throw new NotFoundException("Produto não encontrado");
+        throw new NotFoundException("Produto nao encontrado");
 
     }
 

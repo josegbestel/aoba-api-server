@@ -22,7 +22,6 @@ public class ProdutoModel implements Serializable {
     @NotBlank
     private String foto;
 
-    @NotNull
     private long categoriaId;
 
     private String categoriaNome;

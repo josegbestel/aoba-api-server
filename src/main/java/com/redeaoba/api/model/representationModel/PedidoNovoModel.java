@@ -12,12 +12,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PedidoModel implements Serializable {
+public class PedidoNovoModel implements Serializable {
 
     @NotNull
     private long compradorId;
 
-    @NotNull
     private long enderecoId;
 
     @NotNull
@@ -80,8 +79,8 @@ public class PedidoModel implements Serializable {
         return pedido;
     }
 
-    static public PedidoModel toModel(Pedido pedido){
-        PedidoModel model = new PedidoModel();
+    static public PedidoNovoModel toModel(Pedido pedido){
+        PedidoNovoModel model = new PedidoNovoModel();
         model.setCompradorId(pedido.getComprador().getId());
         model.setEnderecoId(pedido.getEndereco().getId());
         model.setOpcaoAlternativa(pedido.getOpcaoAlternativa());

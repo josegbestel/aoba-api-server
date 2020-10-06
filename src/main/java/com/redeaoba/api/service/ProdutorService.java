@@ -21,9 +21,9 @@ public class ProdutorService {
 
     private void checkDuplicity(Produtor produtor){
         if(produtorRepository.existsByEmail(produtor.getEmail()))
-            throw new DomainException("Já existe produtor com esse email");
+            throw new DomainException("Ja existe produtor com esse email");
         else if(produtorRepository.existsByCodigoRegistro(produtor.getCodigoRegistro()))
-            throw new DomainException("Já existe produtor com esse código de registro");
+            throw new DomainException("Ja existe produtor com esse codigo de registro");
     }
 
     //create
@@ -38,19 +38,19 @@ public class ProdutorService {
     //read
     public Produtor read(Long id) {
         return produtorRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
+                .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
     }
 
     //read by email
     public Produtor readByEmail(String email){
         return produtorRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
+                .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
     }
 
     //update password
     public void updatePassword(Long id, LoginModel loginModel){
         Produtor produtor = produtorRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
+                .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
         produtor.updateSenha(loginModel);
         produtorRepository.save(produtor);
     }
@@ -61,6 +61,6 @@ public class ProdutorService {
         if(produtorRepository.existsById(id))
             produtorRepository.deleteById(id);
         else
-            throw new NotFoundException("Produtor não localizado");
+            throw new NotFoundException("Produtor nao localizado");
     }
 }

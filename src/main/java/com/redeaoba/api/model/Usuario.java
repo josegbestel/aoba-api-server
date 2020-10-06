@@ -1,6 +1,7 @@
 package com.redeaoba.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.redeaoba.api.model.enums.AuthType;
@@ -14,7 +15,8 @@ import java.io.Serializable;
 @Entity
 @Table(name = "usuario")
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -37,6 +39,9 @@ public class Usuario implements Serializable {
     private String nomeFantasia;
 
     private String foto;
+
+    @NotBlank
+    private String telefone;
 
     @Enumerated(EnumType.STRING)
     @JsonIgnore
@@ -90,6 +95,22 @@ public class Usuario implements Serializable {
 
     public void setFoto(String foto) {
         this.foto = foto;
+    }
+
+    public String getTelefone() {
+        return telefone
+                .replace("(", "")
+                .replace("-", "")
+                .replace(" ", "")
+                .replace(".", "");
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone
+                .replace("(", "")
+                .replace("-", "")
+                .replace(" ", "")
+                .replace(".", "");
     }
 
     public AuthType getAuthType() {

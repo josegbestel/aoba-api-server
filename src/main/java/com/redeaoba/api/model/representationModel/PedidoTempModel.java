@@ -15,7 +15,7 @@ public class PedidoTempModel {
     private List<ItemCarrinhoModel> itens = new ArrayList<>();
     private List<DataEntrega> datasEntrega = new ArrayList<>();
     private List<Produtor> produtores = new ArrayList<>();
-    private PedidoModel requisicaoCriar;
+    private PedidoNovoModel requisicaoCriar;
 
     public float getValorFrete() {
         return valorFrete;
@@ -90,18 +90,18 @@ public class PedidoTempModel {
         this.produtores.add(produtor);
     }
 
-    public PedidoModel getRequisicaoCriar() {
-        PedidoModel requisicao = this.requisicaoCriar;
+    public PedidoNovoModel getRequisicaoCriar() {
+        PedidoNovoModel requisicao = this.requisicaoCriar;
         return requisicaoCriar;
     }
 
-    public void setRequisicaoCriar(PedidoModel requisicaoCriar) {
+    public void setRequisicaoCriar(PedidoNovoModel requisicaoCriar) {
         this.requisicaoCriar = requisicaoCriar;
     }
 
     static public PedidoTempModel toModel(Pedido pedido){
         PedidoTempModel tmp = new PedidoTempModel();
-        tmp.setRequisicaoCriar(PedidoModel.toModel(pedido));
+        tmp.setRequisicaoCriar(PedidoNovoModel.toModel(pedido));
         tmp.setValorFrete(pedido.getValorFrete());
         tmp.setValorTotal(pedido.getValorTotal());
 

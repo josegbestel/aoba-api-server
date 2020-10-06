@@ -1,13 +1,18 @@
 package com.redeaoba.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.redeaoba.api.model.enums.StatusItem;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "item_carrinho")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class ItemCarrinho implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -27,11 +32,22 @@ public class ItemCarrinho implements Serializable {
     @NotNull
     private StatusItem status;
 
+    private LocalDateTime dtResposta;
+    private LocalDateTime dtPrazoResposta;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Pedido pedido;
 
     public float getValorTotal(){
-        return anuncio.getValor() * this.quantidade;
+        float vlrTotal = anuncio.getValor() * this.quantidade;
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+
+        String number = df.format(vlrTotal);
+        vlrTotal = Float.parseFloat(number.replace(",", "."));
+
+        return vlrTotal;
+
     }
 
     public long getId() {
@@ -66,7 +82,24 @@ public class ItemCarrinho implements Serializable {
         this.status = status;
     }
 
-    private Pedido getPedido() {
+    public LocalDateTime getDtResposta() {
+        return dtResposta;
+    }
+
+    public void setDtResposta(LocalDateTime dtResposta) {
+        this.dtResposta = dtResposta;
+    }
+
+    public LocalDateTime getDtPrazoResposta() {
+        return dtPrazoResposta;
+    }
+
+    public void setDtPrazoResposta(LocalDateTime dtPrazoResposta) {
+        this.dtPrazoResposta = dtPrazoResposta;
+    }
+
+    @JsonIgnore
+    public Pedido getPedido() {
         return pedido;
     }
 

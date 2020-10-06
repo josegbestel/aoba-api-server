@@ -1,10 +1,11 @@
 package com.redeaoba.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.redeaoba.api.model.enums.DiaSemana;
 
-import java.io.Serializable;
 import java.time.LocalDate;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class DataEntrega implements Comparable<DataEntrega> {
 
     private DiaSemana diaSemana;

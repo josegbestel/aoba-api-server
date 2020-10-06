@@ -63,7 +63,14 @@ public class ComercianteResource {
         return ResponseEntity.ok(comercianteService.createEndereco(id, endereco));
     }
 
-    //delete endereco
+    //OBTER TODOS ENDEREÇOS
+    @GetMapping("/{id}/endereco")
+    @ApiOperation("Obtém todos os endereços do comerciante")
+    public ResponseEntity<List<Endereco>> obterEnderecos(@PathVariable(value = "id")Long id){
+        return ResponseEntity.ok(comercianteService.readEnderecos(id));
+    }
+
+    //DELETAR ENDEREÇO
     @DeleteMapping("/{id}/endereco/{enderecoId}")
     @ApiOperation("Remove um endereço do comerciante")
     public ResponseEntity<Object> removerEndereco(@PathVariable(value = "id")Long id,

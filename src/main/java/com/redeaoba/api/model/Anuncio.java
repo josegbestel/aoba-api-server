@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.redeaoba.api.model.enums.DiaSemana;
+import com.redeaoba.api.model.enums.StatusAnuncio;
 import com.redeaoba.api.model.representationModel.AnuncioModel;
 import com.redeaoba.api.util.StringListConverter;
 import org.apache.tomcat.jni.Local;
@@ -20,7 +21,7 @@ import java.util.List;
 @Entity
 @Table(name = "anuncio")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Anuncio implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -58,6 +59,9 @@ public class Anuncio implements Serializable {
 
     @OneToMany(mappedBy = "anuncio", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ItemCarrinho> itensCarrinho;
+
+    @Enumerated(EnumType.STRING)
+    private StatusAnuncio status;
 
     public long getId() {
         return id;
@@ -131,8 +135,21 @@ public class Anuncio implements Serializable {
         this.fotos = fotos;
     }
 
+    public StatusAnuncio getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusAnuncio status) {
+        this.status = status;
+    }
+
     public boolean isValido() {
         return this.dtValidade.isAfter(LocalDateTime.now());
+    }
+
+    @JsonIgnore
+    public List<ItemCarrinho> getItensCarrinho() {
+        return itensCarrinho;
     }
 
     public static Anuncio byModel(AnuncioModel model, Produto produto, Produtor produtor){

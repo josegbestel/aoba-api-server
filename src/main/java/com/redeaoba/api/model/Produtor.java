@@ -1,5 +1,6 @@
 package com.redeaoba.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.redeaoba.api.model.enums.DiaSemana;
 
@@ -7,11 +8,11 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "produtor")
-
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Produtor extends Usuario implements Serializable {
 
@@ -53,5 +54,23 @@ public class Produtor extends Usuario implements Serializable {
 
     public void setDiasAtendimento(List<DiaSemana> diasAtendimento) {
         this.diasAtendimento = diasAtendimento;
+    }
+
+    private List<Anuncio> getAnuncios() {
+        return anuncios;
+    }
+
+    @JsonIgnore
+    public List<Pedido> getPedidos(){
+        List<Pedido> pedidos = new ArrayList<>();
+        System.out.println("Qtde de anuncios: " + this.getAnuncios().size());
+        for(Anuncio a : this.getAnuncios()){
+            System.out.println("Anúncio " + a.getId());
+            System.out.println(a.getProduto().getNome());
+            for(ItemCarrinho i : a.getItensCarrinho()){
+                pedidos.add(i.getPedido());
+            }
+        }
+        return pedidos;
     }
 }

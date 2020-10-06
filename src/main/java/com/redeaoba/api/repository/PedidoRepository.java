@@ -9,4 +9,10 @@ import java.util.Optional;
 public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     Optional<List<Pedido>> findByCompradorId(long compradorId);
+
+//    Optional<List<Pedido>> findByProdutorId(long produtorId);
+//
+//    Optional<List<Pedido>> findByProdutorIdAndDtRespostaNotNull(long produtorId);
+//
+//    Optional<List<Pedido>> findByProdutorIdAndDtRespostaNull(long produtorId);
 }

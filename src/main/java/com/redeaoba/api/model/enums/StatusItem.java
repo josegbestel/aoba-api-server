@@ -5,6 +5,7 @@ public enum StatusItem {
     PENDENTE,
     CONFIRMADO,
     CANCELADO,
+    BUSCANDO_OPCAO,
     FINALIZADO;
 
     private String status;

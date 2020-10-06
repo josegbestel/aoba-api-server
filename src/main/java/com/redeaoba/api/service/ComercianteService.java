@@ -22,9 +22,9 @@ public class ComercianteService {
 
     private void checkDuplicity(Comerciante comerciante){
         if(comercianteRepository.existsByEmail(comerciante.getEmail()))
-            throw new DomainException("Já existe comerciante com esse email");
+            throw new DomainException("Ja existe comerciante com esse email");
         else if(comercianteRepository.existsByCnpj(comerciante.getCnpj()))
-            throw new DomainException("Já existe comerciante com esse código de registro");
+            throw new DomainException("Ja existe comerciante com esse codigo de registro");
     }
 
     //create
@@ -39,19 +39,19 @@ public class ComercianteService {
     //read
     public Comerciante read(Long id) {
         return comercianteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+                .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
     }
 
     //read by email
     public Comerciante readByEmail(String email){
         return comercianteRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+                .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
     }
 
     //read enderecos
     public List<Endereco> readEnderecos(Long id){
         Comerciante comerciante = comercianteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+                .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
 
         return comerciante.getEnderecos();
     }
@@ -60,7 +60,7 @@ public class ComercianteService {
     //update password
     public void updatePassword(Long id, LoginModel loginModel){
         Comerciante comerciante = comercianteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+                .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
         comerciante.updateSenha(loginModel);
         comercianteRepository.save(comerciante);
     }
@@ -68,7 +68,8 @@ public class ComercianteService {
     //update endereco
     public List<Endereco> createEndereco(Long id, Endereco endereco){
         Comerciante comerciante = comercianteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+                .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
+        System.out.println("qtde endereços: " + comerciante.getEnderecos().size());
         comerciante.addEndereco(endereco);
         comerciante = comercianteRepository.save(comerciante);
         return comerciante.getEnderecos();
@@ -77,9 +78,9 @@ public class ComercianteService {
     //delete endereco
     public void deleteEndereco(Long id, Long enderecoId){
         Comerciante comerciante = comercianteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+                .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
         if(comerciante.removerEndereco(enderecoId)){
-            throw new NotFoundException("Endereço não localizado");
+            throw new NotFoundException("Endereco nao localizado");
         }
 
         comercianteRepository.save(comerciante);
@@ -91,6 +92,6 @@ public class ComercianteService {
         if(comercianteRepository.existsById(id))
             comercianteRepository.deleteById(id);
         else
-            throw new NotFoundException("Comerciante não localizado");
+            throw new NotFoundException("Comerciante nao localizado");
     }
 }

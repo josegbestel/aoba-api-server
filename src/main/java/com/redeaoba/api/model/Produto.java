@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "produto")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Produto implements Serializable {
 
     private static final long serialVersionUID = 1L;
