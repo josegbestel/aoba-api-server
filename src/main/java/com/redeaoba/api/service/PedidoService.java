@@ -62,7 +62,7 @@ public class PedidoService {
             itens.add(item.byModel(anuncio));
         }
 
-        Pedido pedido = pedidoNovoModel.byModel(comerciante, endereco.get(), itens);
+        Pedido pedido = pedidoNovoModel.byModel(comerciante, endereco, itens);
         return PedidoTempModel.toModel(pedido);
 
         /*

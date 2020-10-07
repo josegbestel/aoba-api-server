@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class PedidoNovoModel implements Serializable {
 
@@ -68,6 +69,18 @@ public class PedidoNovoModel implements Serializable {
         this.opcaoAlternativa = opcaoAlternativa;
     }
 
+    public Pedido byModel(Comerciante comerciante, Optional<Endereco> endereco, List<ItemCarrinho> itens){
+        Pedido pedido = new Pedido();
+        pedido.setComprador(comerciante);
+        if(endereco.isPresent())
+            pedido.setEndereco(endereco.get());
+        pedido.setOpcaoAlternativa(this.opcaoAlternativa);
+        pedido.setValorFrete(this.valorFrete);
+        pedido.setItensCarrinho(itens);
+
+        return pedido;
+    }
+
     public Pedido byModel(Comerciante comerciante, Endereco endereco, List<ItemCarrinho> itens){
         Pedido pedido = new Pedido();
         pedido.setComprador(comerciante);
@@ -82,7 +95,8 @@ public class PedidoNovoModel implements Serializable {
     static public PedidoNovoModel toModel(Pedido pedido){
         PedidoNovoModel model = new PedidoNovoModel();
         model.setCompradorId(pedido.getComprador().getId());
-        model.setEnderecoId(pedido.getEndereco().getId());
+        if(pedido.getEndereco() != null)
+            model.setEnderecoId(pedido.getEndereco().getId());
         model.setOpcaoAlternativa(pedido.getOpcaoAlternativa());
         model.setValorFrete(pedido.getValorFrete());
 
