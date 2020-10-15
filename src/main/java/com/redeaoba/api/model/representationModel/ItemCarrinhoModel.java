@@ -18,6 +18,7 @@ public class ItemCarrinhoModel implements Serializable {
 
     @NotNull
     private long anuncioId;
+    private String produtoNome;
     @NotNull
     private int quantidade;
     private String foto;
@@ -30,6 +31,14 @@ public class ItemCarrinhoModel implements Serializable {
 
     public void setAnuncioId(long anuncioId) {
         this.anuncioId = anuncioId;
+    }
+
+    public String getProdutoNome() {
+        return produtoNome;
+    }
+
+    public void setProdutoNome(String produtoNome) {
+        this.produtoNome = produtoNome;
     }
 
     public int getQuantidade() {
@@ -76,6 +85,7 @@ public class ItemCarrinhoModel implements Serializable {
     static public ItemCarrinhoModel toModel(ItemCarrinho item){
         ItemCarrinhoModel model = new ItemCarrinhoModel();
         model.setAnuncioId(item.getAnuncio().getId());
+        model.setProdutoNome(item.getAnuncio().getProduto().getNome());
         model.setQuantidade(item.getQuantidade());
         model.setFoto(item.getAnuncio().getFotos().get(1));
         model.setValor(item.getAnuncio().getValor());
