@@ -27,7 +27,7 @@ public class Pedido implements Serializable {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @OneToMany(cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST,CascadeType.MERGE, CascadeType.REMOVE})
     private List<ItemCarrinho> itensCarrinho;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -62,6 +62,31 @@ public class Pedido implements Serializable {
 
     public List<ItemCarrinho> getItensCarrinho() {
         return itensCarrinho;
+    }
+
+    @JsonIgnore
+    public List<ItemCarrinho> getItensPendentes(){
+        List<ItemCarrinho> pendentes = new ArrayList<>();
+
+        for(ItemCarrinho i : this.getItensCarrinho()){
+            if(i.getStatus() == StatusItem.PENDENTE)
+                pendentes.add(i);
+        }
+
+        return pendentes;
+    }
+
+
+    @JsonIgnore
+    public List<ItemCarrinho> getItensCarrinhoAtivos(){
+        List<ItemCarrinho> ativos = new ArrayList<>();
+
+        for (ItemCarrinho i : itensCarrinho) {
+            if(i.getStatus() != StatusItem.CANCELADO && i.getStatus() != StatusItem.REMOVIDO)
+                ativos.add(i);
+        }
+
+        return ativos;
     }
 
     public void setItensCarrinho(List<ItemCarrinho> itensCarrinho) {
@@ -183,30 +208,41 @@ public class Pedido implements Serializable {
         return itensProdutor;
     }
 
-    private void refreshStatus(){
+    public void refreshStatus(){
         int total = this.getItensCarrinho().size();
         int cancelados = 0;
         int confirmados = 0;
         int pendentes = 0;
+        int removidos = 0;
 
         for(ItemCarrinho i : this.getItensCarrinho()){
-            if(i.getStatus() == StatusItem.CANCELADO){
+            if(i.getStatus() == StatusItem.CANCELADO)
                 cancelados += 1;
-            }else if(i.getStatus() == StatusItem.CONFIRMADO){
+            else if(i.getStatus() == StatusItem.CONFIRMADO)
                 confirmados += 1;
-            }else if(i.getStatus() == StatusItem.PENDENTE){
+            else if(i.getStatus() == StatusItem.PENDENTE)
                 pendentes += 1;
-            }
+            else if(i.getStatus() == StatusItem.REMOVIDO)
+                removidos += 1;
         }
 
         if(cancelados == total)
             this.status = StatusPedido.CANCELADO;
-        else if(confirmados == total){
+        else if(confirmados == (total-removidos-cancelados)){
             this.status = StatusPedido.CONFIRMADO;
             this.dtConfirmado = LocalDateTime.now();
         }
         else if(pendentes > 0)
             this.status = StatusPedido.PENDENTE;
+    }
+
+    public void rejectItensByProdutorId(long produtorId){
+        for (ItemCarrinho i : this.getItensCarrinho()){
+            if(i.getAnuncio().getProdutor().getId() == produtorId){
+                i.setDtResposta(LocalDateTime.now());
+            }
+        }
+        refreshStatus();
     }
 
     public void confirmItensByProdutorId(long produtorId){

@@ -63,8 +63,19 @@ public class PedidoResource {
     @ApiOperation("Responde um pedido a partir do id")
     public ResponseEntity<Object> responderPedidoProdutor(@PathVariable(value = "pedidoId") long pedidoId,
                                                           @PathVariable(value = "produtorId") long produtorId,
-                                                          @RequestParam(value = "aceite") boolean aceite){
+                                                          @RequestParam(value = "aceite") boolean aceite) throws InterruptedException {
         pedidoService.updatePedidoResponder(pedidoId, produtorId, aceite);
+        return ResponseEntity.noContent().build();
+    }
+
+    //Comerciante confirmar opção alternativa
+    //ex: /31//item/32?aceite=true
+    @PutMapping("/{pedidoId}/item/{itemId}")
+    @ApiOperation("O Comerciante confirma ou não o item de opção alternativa com valor superior ao anterior")
+    public ResponseEntity<Object> confirmarOpcaoAlternativa(@PathVariable(value = "pedidoId") long pedidoId,
+                                                            @PathVariable(value = "itemId") long itemId,
+                                                            @RequestParam(value = "aceite") boolean aceite) throws InterruptedException {
+        pedidoService.confirmOpcaoAlternativa(pedidoId, itemId, aceite);
         return ResponseEntity.noContent().build();
     }
 
@@ -73,6 +84,15 @@ public class PedidoResource {
     @ApiOperation("Entrega um pedido")
     public ResponseEntity<Object> entregarPedido(@PathVariable(value = "id") long id){
         pedidoService.updatePedidoEntregar(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    //Reprocessar OpcaoAlternativa
+    @PutMapping("/{pedidoId}/item/{itemId}/reprocessar")
+    public ResponseEntity<Object> reprocessarOpcaoAlternativa(@PathVariable(value = "pedidoId") long pedidoId,
+                                                              @PathVariable(value = "itemId") long itemId) throws InterruptedException {
+
+        pedidoService.reprocessarOpcaoALternativa(pedidoId, itemId);
         return ResponseEntity.noContent().build();
     }
 }

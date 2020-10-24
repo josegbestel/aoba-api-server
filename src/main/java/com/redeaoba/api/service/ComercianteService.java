@@ -56,15 +56,6 @@ public class ComercianteService {
         return comerciante.getEnderecos();
     }
 
-
-    //update password
-    public void updatePassword(Long id, LoginModel loginModel){
-        Comerciante comerciante = comercianteRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
-        comerciante.updateSenha(loginModel);
-        comercianteRepository.save(comerciante);
-    }
-
     //update endereco
     public List<Endereco> createEndereco(Long id, Endereco endereco){
         Comerciante comerciante = comercianteRepository.findById(id)

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AnuncioService {
@@ -85,7 +86,7 @@ public class AnuncioService {
         }
 
         //Faz um filtro retirando DESATUALIZADOS e REMOVIDOS
-        anuncios.stream().filter(a -> a.getStatus() != StatusAnuncio.DESATUALIZADO || a.getStatus() != StatusAnuncio.REMOVIDO);
+        anuncios = anuncios.stream().filter(a -> a.getStatus() != StatusAnuncio.DESATUALIZADO || a.getStatus() != StatusAnuncio.REMOVIDO).collect(Collectors.toList());
 
         return anuncios;
     }
