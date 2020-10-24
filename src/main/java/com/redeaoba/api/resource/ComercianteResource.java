@@ -46,15 +46,6 @@ public class ComercianteResource {
         return ResponseEntity.ok(comercianteService.read(id));
     }
 
-    //EDITAR SENHA
-    @PutMapping("/{id}/editar-senha")
-    @ApiOperation("Editar a senha")
-    public ResponseEntity<Object> editarSenha(@PathVariable(value = "id")Long id,
-                                              @Valid @RequestBody LoginModel login){
-        comercianteService.updatePassword(id, login);
-        return ResponseEntity.noContent().build();
-    }
-
     //ADICIONAR ENDERECO
     @PostMapping("/{id}/endereco")
     @ApiOperation("Adiciona um endereço no comerciante")

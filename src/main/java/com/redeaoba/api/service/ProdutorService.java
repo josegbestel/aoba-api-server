@@ -47,15 +47,6 @@ public class ProdutorService {
                 .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
     }
 
-    //update password
-    public void updatePassword(Long id, LoginModel loginModel){
-        Produtor produtor = produtorRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
-        produtor.updateSenha(loginModel);
-        produtorRepository.save(produtor);
-    }
-
-
     //delete
     public void delete(Long id){
         if(produtorRepository.existsById(id))

@@ -2,6 +2,7 @@ package com.redeaoba.api.model.representationModel;
 
 import com.redeaoba.api.model.ItemCarrinho;
 import com.redeaoba.api.model.enums.DiaSemana;
+import com.redeaoba.api.model.enums.StatusItem;
 
 public class ItemDetalhePedidoRealizadoModel {
 
@@ -11,6 +12,7 @@ public class ItemDetalhePedidoRealizadoModel {
     private int qtde;
     private float total;
     private DiaSemana entrega;
+    private StatusItem statusItem;
 
     public static ItemDetalhePedidoRealizadoModel toModel(ItemCarrinho item) {
         ItemDetalhePedidoRealizadoModel model = new ItemDetalhePedidoRealizadoModel();
@@ -20,6 +22,7 @@ public class ItemDetalhePedidoRealizadoModel {
         model.setQtde(item.getQuantidade());
         model.setTotal(item.getValorTotal());
         model.setEntrega(item.getAnuncio().getDatasEntregas().get(0).getDiaSemana());
+        model.setStatusItem(item.getStatus());
 
         return model;
     }
@@ -70,5 +73,13 @@ public class ItemDetalhePedidoRealizadoModel {
 
     public void setEntrega(DiaSemana entrega) {
         this.entrega = entrega;
+    }
+
+    public StatusItem getStatusItem() {
+        return statusItem;
+    }
+
+    public void setStatusItem(StatusItem statusItem) {
+        this.statusItem = statusItem;
     }
 }

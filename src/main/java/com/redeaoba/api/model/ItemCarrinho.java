@@ -34,6 +34,7 @@ public class ItemCarrinho implements Serializable {
 
     private LocalDateTime dtResposta;
     private LocalDateTime dtPrazoResposta;
+    private int interacoesRespostas;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Pedido pedido;
@@ -96,6 +97,14 @@ public class ItemCarrinho implements Serializable {
 
     public void setDtPrazoResposta(LocalDateTime dtPrazoResposta) {
         this.dtPrazoResposta = dtPrazoResposta;
+    }
+
+    public int getInteracoesRespostas() {
+        return interacoesRespostas;
+    }
+
+    public void setInteracoesRespostas(int interacoesRespostas) {
+        this.interacoesRespostas = interacoesRespostas;
     }
 
     @JsonIgnore

@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.model.enums.AuthType;
 import com.redeaoba.api.model.representationModel.LoginModel;
+import com.redeaoba.api.model.representationModel.UsuarioPerfilModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -121,14 +123,35 @@ public class Usuario implements Serializable {
         this.authType = authType;
     }
 
-    public void updateSenha(LoginModel loginModel) {
-        if(this.getSenha().equals(loginModel.getSenhaAntiga())){
-            this.setSenha(loginModel.getSenhaNova());
-        }
+    @JsonIgnore
+    public void updateSenha(UsuarioPerfilModel perfilModel) {
+        if(this.getSenha().equals(perfilModel.getSenhaAntiga()))
+            this.setSenha(perfilModel.getSenhaNova());
+        else throw new DomainException("Senha incorreta");
+    }
+
+    @JsonIgnore
+    public void updateTelefone(UsuarioPerfilModel perfilModel) {
+        if(this.getTelefone().equals(perfilModel.getTelefoneAntigo()))
+            this.setTelefone(perfilModel.getTelefoneNovo());
+        else throw new DomainException("Telefone incorreto");
+    }
+
+    @JsonIgnore
+    public void updateEmail(UsuarioPerfilModel perfilModel){
+        if(this.getEmail().equals(perfilModel.getEmailAntigo()))
+            this.setEmail(perfilModel.getEmailNovo());
+        else throw new DomainException("Email incorreto");
+    }
+
+    @JsonIgnore
+    public void updateNomes(UsuarioPerfilModel perfilModel){
+        this.setNome(perfilModel.getNome());
+        this.setNomeFantasia(perfilModel.getNomeFantasia());
     }
 
     //TODO: Implementar metodo que faça a média das avaliações
     public float getRating(){
-        return -1;
+        return this.getId();
     }
 }

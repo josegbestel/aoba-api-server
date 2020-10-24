@@ -46,15 +46,6 @@ public class ProdutorResource {
         return ResponseEntity.ok(produtorService.read(id));
     }
 
-    //EDITAR SENHA
-    @PutMapping("/{id}/editar-senha")
-    @ApiOperation("Editar a senha")
-    public ResponseEntity<Object> editarSenha(@PathVariable(value = "id")Long id,
-                                              @Valid @RequestBody LoginModel login){
-        produtorService.updatePassword(id, login);
-        return ResponseEntity.noContent().build();
-    }
-
     //DELETER
     @DeleteMapping("/{id}")
     @ApiOperation("Deleta um produtor")
