@@ -37,9 +37,8 @@ public class PedidoService {
     @Autowired
     AnuncioRepository anuncioRepository;
 
-    @Autowired
-    @Lazy
-    AsyncPedidoService asyncPedidoService;
+//    @Autowired
+//    AsyncPedidoService asyncPedidoService;
 
     @Autowired
     ItemCarrinhoRepository itemCarrinhoRepository;
@@ -109,8 +108,8 @@ public class PedidoService {
         //Salvar pedido no BD
         pedido = pedidoRepository.save(pedido);
 
-        //chama uma função para qnd vencer e n tiver resposta
-        asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
+        //TODO: chama uma função para qnd vencer e n tiver resposta
+//        asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
 
         //TODO: Enviar notificação para produtores
 
@@ -274,7 +273,8 @@ public class PedidoService {
             }
         }
         pedidoRepository.save(pedido);
-        asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
+        //TODO: Chamar método async para acompanhar prazo
+//        asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
     }
 
     //Entregar pedido
@@ -377,8 +377,9 @@ public class PedidoService {
         pedido = pedidoRepository.save(pedido);
 
         //Chamar função async
-        if(!aConfirmar)
-            asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
+//        if(!aConfirmar)
+//            //TODO: Chamar função async para acompanhar prazo
+//            asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
 
         return pedido;
     }
