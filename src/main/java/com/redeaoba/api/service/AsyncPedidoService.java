@@ -27,6 +27,7 @@ public class AsyncPedidoService {
     PedidoRepository pedidoRepository;
 
     @Autowired
+    @Lazy
     PedidoService pedidoService;
 
     @Async
