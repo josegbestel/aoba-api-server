@@ -30,7 +30,7 @@ public class AsyncPedidoService {
 //    PedidoService pedidoService;
 
     @Async
-    public void acompanharPrazoResposta(long pedidoId, LocalDateTime prazo) throws InterruptedException {
+    public void acompanharPrazoResposta(Long pedidoId, LocalDateTime prazo) throws InterruptedException {
         LocalDateTime now = LocalDateTime.now();
 
         long millis = ChronoUnit.MILLIS.between(now, prazo);
