@@ -27,8 +27,7 @@ public class AsyncPedidoService {
     PedidoRepository pedidoRepository;
 
     @Autowired
-    @Lazy
-    PedidoService pedidoService;
+//    PedidoService pedidoService;
 
     @Async
     public void acompanharPrazoResposta(long pedidoId, LocalDateTime prazo) throws InterruptedException {
@@ -55,7 +54,7 @@ public class AsyncPedidoService {
                     //Item sem resposta
                     if(pedido.getOpcaoAlternativa() == OpcaoAlternativa.ACEITAR_SUGESTAO){
                         //Buscar alternativa
-                        pedidoService.buscarOpcaoItem(pedido, i);
+//                        pedidoService.buscarOpcaoItem(pedido, i);
                     }else{
                         //Cancelar item
                         i.setStatus(StatusItem.CANCELADO);
