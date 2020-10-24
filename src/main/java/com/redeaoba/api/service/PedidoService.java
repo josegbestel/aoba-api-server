@@ -11,6 +11,7 @@ import com.redeaoba.api.model.enums.StatusPedido;
 import com.redeaoba.api.model.representationModel.*;
 import com.redeaoba.api.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,7 @@ public class PedidoService {
     AnuncioRepository anuncioRepository;
 
     @Autowired
+    @Lazy
     AsyncPedidoService asyncPedidoService;
 
     @Autowired
