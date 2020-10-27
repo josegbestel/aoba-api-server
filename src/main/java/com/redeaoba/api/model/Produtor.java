@@ -33,7 +33,7 @@ public class Produtor extends Usuario implements Serializable {
     private List<Anuncio> anuncios;
 
     @OneToMany(mappedBy = "produtor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<Avaliacao> avaliacoes;
+    private List<Avaliacao> avaliacoes = new ArrayList<>();
 
     public String getCodigoRegistro() {
         return codigoRegistro;
@@ -88,16 +88,17 @@ public class Produtor extends Usuario implements Serializable {
     }
 
     public float getRating(){
-        float total = 0;
-        int qtde = 0;
-        float avg;
+        if(this.getAvaliacoes().size()>0){
+            float notas = 0;
+            float qtde = 0;
 
-        for (Avaliacao a : this.getAvaliacoes()) {
-            total += a.getNota();
-            qtde ++;
+            for (Avaliacao a : this.getAvaliacoes()) {
+                notas += a.getNota();
+                qtde += 1;
+            }
+
+            return notas/qtde;
         }
-
-        avg = total/qtde;
-        return avg;
+        return -1;
     }
 }
