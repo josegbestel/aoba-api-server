@@ -3,6 +3,7 @@ package com.redeaoba.api.repository;
 import com.redeaoba.api.model.Anuncio;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,5 +18,5 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
 
     Optional<List<Anuncio>> findByDtValidadeGreaterThan(LocalDateTime dtValidade);
 
-    Optional<Anuncio> findByProdutorIdAndProdutoId(Long produtorId, long produtoId);
+    Optional<List<Anuncio>> findByProdutorIdAndProdutoId(Long produtorId, long produtoId);
 }

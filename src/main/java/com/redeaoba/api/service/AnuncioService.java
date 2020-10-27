@@ -16,6 +16,7 @@ import com.redeaoba.api.repository.ProdutorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,10 +41,16 @@ public class AnuncioService {
 
     //CREATE
     public Anuncio create(AnuncioModel anuncioModel){
-        Optional<Anuncio> anuncioExistente = anuncioRepository.findByProdutorIdAndProdutoId(anuncioModel.getProdutorId(), anuncioModel.getProdutoId());
-        if(anuncioExistente.isPresent()){
-            if(anuncioExistente.get().isValido() && anuncioExistente.get().isAtivo()){
-                throw new DomainException("Ja existe anuncio ativo e valido com esse produtor e produto");
+        Timestamp time = Timestamp.valueOf(LocalDateTime.now());
+
+        Optional<List<Anuncio>> anunciosExistentes = anuncioRepository
+                .findByProdutorIdAndProdutoId(anuncioModel.getProdutorId(), anuncioModel.getProdutoId());
+
+        if(anunciosExistentes.isPresent()){
+            for (Anuncio a : anunciosExistentes.get()) {
+                if(a.isValido() && a.isAtivo()){
+                    throw new DomainException("Ja existe anuncio ativo e valido com esse produtor e produto");
+                }
             }
         }
 
@@ -85,8 +92,11 @@ public class AnuncioService {
             }
         }
 
-        //Faz um filtro retirando DESATUALIZADOS e REMOVIDOS
-        anuncios = anuncios.stream().filter(a -> a.getStatus() != StatusAnuncio.DESATUALIZADO || a.getStatus() != StatusAnuncio.REMOVIDO).collect(Collectors.toList());
+        //Remover REMOVIDOS
+        anuncios = anuncios.stream().filter(a -> a.getStatus() != StatusAnuncio.REMOVIDO).collect(Collectors.toList());
+
+        //Remover DESATUALIZADOS
+        anuncios = anuncios.stream().filter(a -> a.getStatus() != StatusAnuncio.DESATUALIZADO).collect(Collectors.toList());
 
         return anuncios;
     }
@@ -181,15 +191,19 @@ public class AnuncioService {
         Anuncio anuncio = anuncioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
 
-        if (qtde == 0.0){
-            throw new DomainException("Valor de qtde invalido");
+        //Validar se anuncio está REMOVIDO ou DESATUALIZADO
+        if(anuncio.getStatus() == StatusAnuncio.REMOVIDO || anuncio.getStatus() == StatusAnuncio.DESATUALIZADO)
+            throw new DomainException("Este anuncio não está ativo");
+
+        if (qtde == 0 && valor == 0.0){
+            throw new DomainException("Nenhum valor informado");
         }
 
-        if(valor > 0){
+        if(valor > 0.0){
             //Criar um novo e desativar o antigo
             Anuncio anuncioNovo = new Anuncio();
             anuncioNovo.setDtValidade(LocalDateTime.now().plusDays(7));
-            anuncioNovo.setQtdeMax(qtde);
+            anuncioNovo.setQtdeMax(qtde == 0 ? anuncio.getQtdeMax() : qtde);
             anuncioNovo.setValor(valor);
             anuncioNovo.setAtivo(true);
             anuncioNovo.setDtCriacao(LocalDateTime.now());

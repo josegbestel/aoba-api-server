@@ -20,33 +20,30 @@ public class UsuarioService {
                 .orElseThrow(() -> new NotFoundException("Usuario nao localizado"));
 
         //Validar se todos os campos estão null
-        if(perfilModel.getNome().isEmpty() && perfilModel.getNomeFantasia().isEmpty()
-                && perfilModel.getEmailAntigo().isEmpty() && perfilModel.getEmailNovo().isEmpty()
-                && perfilModel.getTelefoneAntigo().isEmpty() && perfilModel.getTelefoneNovo().isEmpty()
-                && perfilModel.getSenhaAntiga().isEmpty() && perfilModel.getSenhaNova().isEmpty()){
-            throw new DomainException("Todos os campos enviados estão nulo");
-        }
+//        if(perfilModel.getNome() != null && perfilModel.getNomeFantasia() != null
+//                && perfilModel.getEmailAntigo() != null && perfilModel.getEmailNovo() != null
+//                && perfilModel.getTelefoneAntigo() != null && perfilModel.getTelefoneNovo() != null
+//                && perfilModel.getSenhaAntiga() != null && perfilModel.getSenhaNova() != null){
+//            throw new DomainException("Todos os campos enviados estão nulo");
+//        }
 
         //Alterar senha
         //Se apenas 1 estiver preenchido, lançar erro
-        if(!perfilModel.getSenhaAntiga().isEmpty() && !perfilModel.getSenhaNova().isEmpty()){
+        if(perfilModel.getSenhaAntiga() != null && perfilModel.getSenhaNova() != null){
+            System.out.println("Alterar senha");
             usuario.updateSenha(perfilModel);
-        }else{
-            throw new DomainException("Os dois campos ref a senha devem estar preenchidos");
         }
 
         //Alterar telefone
-        if(!perfilModel.getTelefoneAntigo().isEmpty() && !perfilModel.getTelefoneNovo().isEmpty()){
+        if(perfilModel.getTelefoneAntigo() != null && perfilModel.getTelefoneNovo() != null){
+            System.out.println("Alterar telefone");
             usuario.updateTelefone(perfilModel);
-        }else{
-            throw new DomainException("Os dois campos ref ao telefone devem estar preenchidos");
         }
 
         //Alterar email
-        if(!perfilModel.getEmailAntigo().isEmpty() && !perfilModel.getEmailNovo().isEmpty()){
+        if(perfilModel.getEmailAntigo() != null && perfilModel.getEmailNovo() != null){
+            System.out.println("Alterar email");
             usuario.updateEmail(perfilModel);
-        }else{
-            throw new DomainException("Os dois campos ref ao email devem estar preenchidos");
         }
 
         //Alterar nomes

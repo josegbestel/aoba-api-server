@@ -51,6 +51,7 @@ public class AnuncioResource {
         return ResponseEntity.ok(anuncioService.readAnunciosAtivos());
     }
 
+    //Editar
     @PutMapping("/{id}")
     @ApiOperation("Edita a quantidade e valor de um anúncio já criado pelo ID do anúncio. " +
             "Se editar o valor, o anuncio atual será desativado e criará um novo")

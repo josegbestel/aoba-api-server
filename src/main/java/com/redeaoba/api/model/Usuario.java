@@ -146,8 +146,11 @@ public class Usuario implements Serializable {
 
     @JsonIgnore
     public void updateNomes(UsuarioPerfilModel perfilModel){
-        this.setNome(perfilModel.getNome());
-        this.setNomeFantasia(perfilModel.getNomeFantasia());
+        if(perfilModel.getNome() != null)
+            this.setNome(perfilModel.getNome());
+
+        if(perfilModel.getNomeFantasia() != null)
+            this.setNomeFantasia(perfilModel.getNomeFantasia());
     }
 
 
