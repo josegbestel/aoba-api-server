@@ -28,6 +28,9 @@ public class Comerciante extends Usuario implements Serializable {
     @OneToMany(mappedBy = "comprador", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 
+    @OneToMany(mappedBy = "comerciante", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Avaliacao> avaliacoes;
+
     public String getCnpj() {
         return cnpj;
     }
@@ -57,5 +60,15 @@ public class Comerciante extends Usuario implements Serializable {
             }
         }
         return false;
+    }
+
+    @JsonIgnore
+    public List<Avaliacao> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    @JsonIgnore
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+        this.avaliacoes = avaliacoes;
     }
 }

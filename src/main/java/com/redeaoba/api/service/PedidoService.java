@@ -43,6 +43,9 @@ public class PedidoService {
     @Autowired
     ItemCarrinhoRepository itemCarrinhoRepository;
 
+    @Autowired
+    AvaliacaoRepository avaliacaoRepository;
+
     //Montar carrinho
     public PedidoTempModel rideCart(PedidoNovoModel pedidoNovoModel){
         Comerciante comerciante = comercianteRepository.findById(pedidoNovoModel.getCompradorId())
@@ -306,6 +309,29 @@ public class PedidoService {
                 buscarOpcaoItem(pedido, i);
             }
         }
+    }
+
+    //Avaliar
+    public void avaliarPedido(long idPedido, AvaliacaoModel avaliacaoModel){
+        Pedido pedido = pedidoRepository.findById(idPedido)
+                .orElseThrow(() -> new NotFoundException("Pedido nao localizado"));
+
+        //Validar se o pedido já foi entregue
+        if (pedido.getStatus() != StatusPedido.ENTREGUE)
+            throw new DomainException("Este pedido ainda não foi entregue");
+
+        //Validar se já tem avaliação deste profissional
+        for (Avaliacao a : pedido.getAvaliacoes()) {
+            if(a.getProdutor().getId() == avaliacaoModel.getProdutorId())
+                throw new DomainException("Este produtor ja foi avaliado neste pedido");
+        }
+
+        Produtor produtor = produtorRepository.findById(avaliacaoModel.getProdutorId())
+                .orElseThrow(() -> new NotFoundException("Produtor não localizado"));
+
+        Avaliacao avaliacao = new Avaliacao(pedido, produtor, avaliacaoModel);
+
+        avaliacaoRepository.save(avaliacao);
     }
 
     //[interna] Calcular o frete

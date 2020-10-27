@@ -52,6 +52,9 @@ public class Pedido implements Serializable {
     @Enumerated(EnumType.STRING)
     private StatusPedido status;
 
+    @OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Avaliacao> avaliacoes;
+
     public long getId() {
         return id;
     }
@@ -206,6 +209,16 @@ public class Pedido implements Serializable {
             }
         }
         return itensProdutor;
+    }
+
+    @JsonIgnore
+    public List<Avaliacao> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    @JsonIgnore
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+        this.avaliacoes = avaliacoes;
     }
 
     public void refreshStatus(){

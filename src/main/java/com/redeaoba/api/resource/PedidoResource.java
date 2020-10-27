@@ -1,10 +1,7 @@
 package com.redeaoba.api.resource;
 
 import com.redeaoba.api.model.Pedido;
-import com.redeaoba.api.model.representationModel.PedidoProdutorNovoModel;
-import com.redeaoba.api.model.representationModel.PedidoNovoModel;
-import com.redeaoba.api.model.representationModel.PedidoRealizadoModel;
-import com.redeaoba.api.model.representationModel.PedidoTempModel;
+import com.redeaoba.api.model.representationModel.*;
 import com.redeaoba.api.service.PedidoService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -93,6 +90,13 @@ public class PedidoResource {
                                                               @PathVariable(value = "itemId") long itemId) throws InterruptedException {
 
         pedidoService.reprocessarOpcaoALternativa(pedidoId, itemId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{pedidoId}/avaliar")
+    public ResponseEntity<Object> avaliarPedido(@PathVariable(value = "pedidoId") long pedidoId,
+                                                @Valid @RequestBody AvaliacaoModel avaliacao){
+        pedidoService.avaliarPedido(pedidoId, avaliacao);
         return ResponseEntity.noContent().build();
     }
 }

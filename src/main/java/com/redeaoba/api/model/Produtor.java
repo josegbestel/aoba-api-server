@@ -32,6 +32,9 @@ public class Produtor extends Usuario implements Serializable {
     @OneToMany(mappedBy = "produtor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Anuncio> anuncios;
 
+    @OneToMany(mappedBy = "produtor", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Avaliacao> avaliacoes;
+
     public String getCodigoRegistro() {
         return codigoRegistro;
     }
@@ -72,5 +75,29 @@ public class Produtor extends Usuario implements Serializable {
             }
         }
         return pedidos;
+    }
+
+    @JsonIgnore
+    public List<Avaliacao> getAvaliacoes() {
+        return avaliacoes;
+    }
+
+    @JsonIgnore
+    public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+        this.avaliacoes = avaliacoes;
+    }
+
+    public float getRating(){
+        float total = 0;
+        int qtde = 0;
+        float avg;
+
+        for (Avaliacao a : this.getAvaliacoes()) {
+            total += a.getNota();
+            qtde ++;
+        }
+
+        avg = total/qtde;
+        return avg;
     }
 }

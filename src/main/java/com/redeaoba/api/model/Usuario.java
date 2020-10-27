@@ -150,8 +150,5 @@ public class Usuario implements Serializable {
         this.setNomeFantasia(perfilModel.getNomeFantasia());
     }
 
-    //TODO: Implementar metodo que faça a média das avaliações
-    public float getRating(){
-        return this.getId();
-    }
+
 }
