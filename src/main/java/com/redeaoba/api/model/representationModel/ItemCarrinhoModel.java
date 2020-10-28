@@ -87,7 +87,8 @@ public class ItemCarrinhoModel implements Serializable {
         model.setAnuncioId(item.getAnuncio().getId());
         model.setProdutoNome(item.getAnuncio().getProduto().getNome());
         model.setQuantidade(item.getQuantidade());
-        model.setFoto(item.getAnuncio().getFotos().get(1));
+        if(item.getAnuncio().getFotos().size() >0)
+            model.setFoto(item.getAnuncio().getFotos().get(0));
         model.setValor(item.getAnuncio().getValor());
         model.setDataEntrega(item.getAnuncio().getDatasEntregas().get(0));
 
