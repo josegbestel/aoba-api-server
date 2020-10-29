@@ -48,7 +48,7 @@ public class AnuncioService {
 
         if(anunciosExistentes.isPresent()){
             for (Anuncio a : anunciosExistentes.get()) {
-                if(a.isValido() && a.isAtivo()){
+                if(a.isValido() && a.isAtivo() && a.getStatus() == StatusAnuncio.ATIVO){
                     throw new DomainException("Ja existe anuncio ativo e valido com esse produtor e produto");
                 }
             }
@@ -173,15 +173,6 @@ public class AnuncioService {
         return secoesModel;
     }
 
-    //DECREMENTAR QUANTIDADE
-    private Anuncio decrementQtde(Long id, int qtde){
-        Anuncio anuncio = anuncioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
-
-        anuncio.setQtdeMax(anuncio.getQtdeMax()-qtde);
-        return anuncioRepository.save(anuncio);
-    }
-
     //UPDATE QTDE E VALOR
     public void updateAnuncio(long id, int qtde, float valor){
         System.out.println("id: " + id
@@ -215,6 +206,8 @@ public class AnuncioService {
             anuncioRepository.save(anuncioNovo);
 
             anuncio.setStatus(StatusAnuncio.DESATUALIZADO);
+            anuncio.setAtivo(false);
+            anuncio.setDtValidade(LocalDateTime.now());
             anuncioRepository.save(anuncio);
         }else{
             //Atualizar o novo
@@ -259,6 +252,7 @@ public class AnuncioService {
 
         anuncio.setStatus(StatusAnuncio.REMOVIDO);
         anuncio.setAtivo(false);
+        anuncio.setDtValidade(LocalDateTime.now());
         anuncioRepository.save(anuncio);
     }
 
