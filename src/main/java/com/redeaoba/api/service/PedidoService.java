@@ -124,8 +124,7 @@ public class PedidoService {
         if(!comercianteRepository.existsById(compradorId)){
             throw new NotFoundException("Comerciante nao localizado");
         }
-        List<Pedido> pedidos = pedidoRepository.findByCompradorId(compradorId)
-                .orElseThrow(() -> new NotFoundException("Pedido nao localizado"));
+        List<Pedido> pedidos = pedidoRepository.findByCompradorId(compradorId);
 
         //Remover itens cancelados ou removidos dos pedidos
         for (Pedido p : pedidos){
