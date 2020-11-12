@@ -24,6 +24,17 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     @Autowired
     private MessageSource messageSource;
 
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<Object> handleAuthorization(AuthorizationException ex, WebRequest request){
+        HttpStatus status = HttpStatus.UNAUTHORIZED;
+        Problema problema = new Problema();
+        problema.setStatus(status.value());
+        problema.setTitulo(ex.getMessage());
+        problema.setDataHora(LocalDateTime.now());
+
+        return handleExceptionInternal(ex, problema, new HttpHeaders(), status, request);
+    }
+
     @ExceptionHandler(DomainException.class)
     public ResponseEntity<Object> handleDomain(DomainException ex, WebRequest request){
         HttpStatus status = HttpStatus.BAD_REQUEST;

@@ -99,6 +99,17 @@ public class PedidoTempModel {
         this.requisicaoCriar = requisicaoCriar;
     }
 
+    static public List<PedidoTempModel> toModel(List<Pedido> pedidos){
+        List<PedidoTempModel> pedidosTemp = new ArrayList<>();
+        for (Pedido p : pedidos) {
+            PedidoTempModel pt = PedidoTempModel.toModel(p);
+            pt.setRequisicaoCriar(null);
+            pedidosTemp.add(pt);
+        }
+
+        return pedidosTemp;
+    }
+
     static public PedidoTempModel toModel(Pedido pedido){
         PedidoTempModel tmp = new PedidoTempModel();
         tmp.setRequisicaoCriar(PedidoNovoModel.toModel(pedido));

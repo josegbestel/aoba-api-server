@@ -1,5 +1,6 @@
 package com.redeaoba.api.service;
 
+import com.redeaoba.api.exception.AuthorizationException;
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.Usuario;
@@ -15,17 +16,13 @@ public class UsuarioService {
     UsuarioRepository usuarioRepository;
 
     //Editar perfil
-    public Usuario edit(long idUsuario, UsuarioPerfilModel perfilModel){
+    public Usuario edit(long idUsuario, UsuarioPerfilModel perfilModel, String emailUsuario){
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new NotFoundException("Usuario nao localizado"));
 
-        //Validar se todos os campos estão null
-//        if(perfilModel.getNome() != null && perfilModel.getNomeFantasia() != null
-//                && perfilModel.getEmailAntigo() != null && perfilModel.getEmailNovo() != null
-//                && perfilModel.getTelefoneAntigo() != null && perfilModel.getTelefoneNovo() != null
-//                && perfilModel.getSenhaAntiga() != null && perfilModel.getSenhaNova() != null){
-//            throw new DomainException("Todos os campos enviados estão nulo");
-//        }
+        //[autenticação] Se o idUsuário é o mesmo do login
+        if(!usuario.getEmail().equals(emailUsuario))
+            throw new AuthorizationException();
 
         //Alterar senha
         //Se apenas 1 estiver preenchido, lançar erro

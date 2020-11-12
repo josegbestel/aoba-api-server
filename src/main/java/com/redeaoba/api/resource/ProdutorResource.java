@@ -1,7 +1,6 @@
 package com.redeaoba.api.resource;
 
 import com.redeaoba.api.model.Produtor;
-import com.redeaoba.api.model.representationModel.LoginModel;
 import com.redeaoba.api.service.ProdutorService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,8 +48,9 @@ public class ProdutorResource {
     //DELETER
     @DeleteMapping("/{id}")
     @ApiOperation("Deleta um produtor")
-    public ResponseEntity<Object> deletar(@PathVariable(value = "id")Long id){
-        produtorService.delete(id);
+    public ResponseEntity<Object> deletar(@PathVariable(value = "id")Long id,
+                                          @AuthenticationPrincipal UserDetails userDetails){
+        produtorService.delete(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 

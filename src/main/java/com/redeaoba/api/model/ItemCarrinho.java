@@ -45,7 +45,9 @@ public class ItemCarrinho implements Serializable {
         df.setMaximumFractionDigits(2);
 
         String number = df.format(vlrTotal);
-        vlrTotal = Float.parseFloat(number.replace(",", "."));
+        number = number.replace("\\.", "");
+        number = number.replace(",", ".");
+        vlrTotal = Float.parseFloat(number);
 
         return vlrTotal;
 

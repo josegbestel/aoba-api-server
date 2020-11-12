@@ -50,31 +50,35 @@ public class ComercianteResource {
     @PostMapping("/{id}/endereco")
     @ApiOperation("Adiciona um endereço no comerciante")
     public ResponseEntity<List<Endereco>> adicionarSenha(@PathVariable(value = "id")Long id,
-                                                         @Valid @RequestBody Endereco endereco){
-        return ResponseEntity.ok(comercianteService.createEndereco(id, endereco));
+                                                         @Valid @RequestBody Endereco endereco,
+                                                         @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(comercianteService.createEndereco(id, endereco, userDetails.getUsername()));
     }
 
     //OBTER TODOS ENDEREÇOS
     @GetMapping("/{id}/endereco")
     @ApiOperation("Obtém todos os endereços do comerciante")
-    public ResponseEntity<List<Endereco>> obterEnderecos(@PathVariable(value = "id")Long id){
-        return ResponseEntity.ok(comercianteService.readEnderecos(id));
+    public ResponseEntity<List<Endereco>> obterEnderecos(@PathVariable(value = "id")Long id,
+                                                         @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(comercianteService.readEnderecos(id, userDetails.getUsername()));
     }
 
     //DELETAR ENDEREÇO
     @DeleteMapping("/{id}/endereco/{enderecoId}")
     @ApiOperation("Remove um endereço do comerciante")
     public ResponseEntity<Object> removerEndereco(@PathVariable(value = "id")Long id,
-                                                  @PathVariable(value = "enderecoId")Long enderecoId){
-        comercianteService.deleteEndereco(id, enderecoId);
+                                                  @PathVariable(value = "enderecoId")Long enderecoId,
+                                                  @AuthenticationPrincipal UserDetails userDetails){
+        comercianteService.deleteEndereco(id, enderecoId, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 
     //DELETER
     @DeleteMapping("/{id}")
     @ApiOperation("Deleta um comerciante")
-    public ResponseEntity<Object> deletar(@PathVariable(value = "id")Long id){
-        comercianteService.delete(id);
+    public ResponseEntity<Object> deletar(@PathVariable(value = "id")Long id,
+                                          @AuthenticationPrincipal UserDetails userDetails){
+        comercianteService.delete(id, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

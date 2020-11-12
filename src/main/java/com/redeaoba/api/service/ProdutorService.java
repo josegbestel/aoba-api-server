@@ -1,5 +1,6 @@
 package com.redeaoba.api.service;
 
+import com.redeaoba.api.exception.AuthorizationException;
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.Endereco;
@@ -48,10 +49,14 @@ public class ProdutorService {
     }
 
     //delete
-    public void delete(Long id){
-        if(produtorRepository.existsById(id))
-            produtorRepository.deleteById(id);
-        else
-            throw new NotFoundException("Produtor nao localizado");
+    public void delete(Long id, String emailProdutor){
+        Produtor produtor = produtorRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
+
+        //[autorização] se idProdutor é o mesmo do login
+        if(!produtor.getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
+
+        produtorRepository.deleteById(id);
     }
 }

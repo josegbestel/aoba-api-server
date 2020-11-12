@@ -1,15 +1,11 @@
 package com.redeaoba.api.model.representationModel;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.redeaoba.api.model.Anuncio;
 import com.redeaoba.api.model.DataEntrega;
 import com.redeaoba.api.model.ItemCarrinho;
 import com.redeaoba.api.model.enums.StatusItem;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 

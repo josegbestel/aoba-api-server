@@ -1,6 +1,7 @@
 package com.redeaoba.api.service;
 
 import com.redeaoba.api.config.ApplicationConfig;
+import com.redeaoba.api.exception.AuthorizationException;
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.*;
@@ -47,10 +48,14 @@ public class PedidoService {
     AvaliacaoRepository avaliacaoRepository;
 
     //Montar carrinho
-    public PedidoTempModel rideCart(PedidoNovoModel pedidoNovoModel){
+    public PedidoTempModel rideCart(PedidoNovoModel pedidoNovoModel, String emailComerciante){
         Comerciante comerciante = comercianteRepository.findById(pedidoNovoModel.getCompradorId())
                 .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
         Optional<Endereco> endereco = enderecoRepository.findById(pedidoNovoModel.getEnderecoId());
+
+        //[autorização] Se o comprador no body é o mesmo do login
+        if(!comerciante.getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
 
         //Instanciar todos os itens
         List<ItemCarrinho> itens = new ArrayList<>();
@@ -76,7 +81,7 @@ public class PedidoService {
     }
 
     //Criar novo
-    public PedidoRealizadoModel create(PedidoNovoModel pedidoNovoModel) throws InterruptedException {
+    public PedidoRealizadoModel create(PedidoNovoModel pedidoNovoModel, String emailComerciante) throws InterruptedException {
         LocalDateTime now = LocalDateTime.now();
 
         //Recusar pedidos das 20h às 12h
@@ -89,6 +94,10 @@ public class PedidoService {
                 .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
         Endereco endereco = enderecoRepository.findById(pedidoNovoModel.getEnderecoId())
                 .orElseThrow(() -> new NotFoundException("Endereco nao localizado"));
+
+        //[autorização] Se o comprador no body é o mesmo do login
+        if(!comerciante.getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
 
         //Instanciar todos os itens
         List<ItemCarrinho> itens = new ArrayList<>();
@@ -120,10 +129,14 @@ public class PedidoService {
     }
 
     //Obter por Comerciante
-    public List<PedidoRealizadoModel> readByCompradorId(long compradorId){
-        if(!comercianteRepository.existsById(compradorId)){
-            throw new NotFoundException("Comerciante nao localizado");
-        }
+    public List<PedidoRealizadoModel> readByCompradorId(long compradorId, String emailComerciante){
+        Comerciante comerciante = comercianteRepository.findById(compradorId)
+                .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
+
+        //[autorização] Se o comprador no body é o mesmo do login
+        if(!comerciante.getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
+
         List<Pedido> pedidos = pedidoRepository.findByCompradorId(compradorId);
 
         //Remover itens cancelados ou removidos dos pedidos
@@ -135,17 +148,21 @@ public class PedidoService {
     }
 
     //Obter respondidos por Produtor
-    public List<PedidoRealizadoModel> readRespondidosByProdutorId(long produtorId){
+    public List<PedidoRealizadoModel> readRespondidosByProdutorId(long produtorId, String emailProdutor){
         Produtor produtor = produtorRepository.findById(produtorId)
                 .orElseThrow((() -> new NotFoundException("Produtor nao localizado")));
 
+        //[autorização] Se o produtorId é o mesmo do login
+        if(!produtor.getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
 
         List<Pedido> pedidos = produtor.getPedidos();
 
         //Filtrar apenas casos respondidos
         List<Pedido> pedidosProdutor = new ArrayList<>();
         for (Pedido p : pedidos){
-            if(p.getItensCarrinhoByProdutorId(produtorId).get(0).getDtResposta() != null){
+            p.setItensCarrinho(p.getItensCarrinhoByProdutorId(produtorId));
+            if(p.getItensCarrinho().get(0).getDtResposta() != null){
                 pedidosProdutor.add(p);
             }
         }
@@ -159,9 +176,13 @@ public class PedidoService {
     }
 
     //Obter novos por Produtor
-    public List<PedidoProdutorNovoModel> readNovosByProdutorId(long produtorId){
+    public List<PedidoProdutorNovoModel> readNovosByProdutorId(long produtorId, String emailProdutor){
         Produtor produtor = produtorRepository.findById(produtorId)
                 .orElseThrow((() -> new NotFoundException("Produtor nao localizado")));
+
+        //[autorização] Se o produtorId é o mesmo do login
+        if(!produtor.getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
 
         //Filtrar apenas casos não respondidos
         List<Pedido> pedidos = new ArrayList<>();
@@ -217,9 +238,13 @@ public class PedidoService {
     }
 
     //Responder produtor
-    public void updatePedidoResponder(long pedidoId, long produtorId, boolean aceite) throws InterruptedException {
+    public void updatePedidoResponder(long pedidoId, long produtorId, boolean aceite, String emailProdutor) throws InterruptedException {
         Produtor produtor = produtorRepository.findById(produtorId)
                 .orElseThrow((() -> new NotFoundException("Produtor nao localizado")));
+
+        //[autorização] Se o produtorId é o mesmo do login
+        if(!produtor.getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
 
         Pedido pedido = pedidoRepository.findById(pedidoId)
                 .orElseThrow(() -> new NotFoundException("Pedido nao localizado"));
@@ -262,9 +287,13 @@ public class PedidoService {
     }
 
     //Pedir confirmação do comprador para segunda opção c/ preço superior
-    public void confirmOpcaoAlternativa(long idPedido, long idItem, boolean confirmacao) throws InterruptedException {
+    public void confirmOpcaoAlternativa(long idPedido, long idItem, boolean confirmacao, String emailComerciante) throws InterruptedException {
         Pedido pedido = pedidoRepository.findById(idPedido)
                 .orElseThrow(() -> new NotFoundException("Pedido nao localizado"));
+
+        //[autorização] Validar se o login pertence a esse pedido
+        if(!pedido.getComprador().getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
 
         for (ItemCarrinho i : pedido.getItensCarrinho()) {
             if(i.getId() == idItem){
@@ -311,9 +340,13 @@ public class PedidoService {
     }
 
     //Avaliar
-    public void avaliarPedido(long idPedido, AvaliacaoModel avaliacaoModel){
+    public void avaliarPedido(long idPedido, AvaliacaoModel avaliacaoModel, String emailComerciante){
         Pedido pedido = pedidoRepository.findById(idPedido)
                 .orElseThrow(() -> new NotFoundException("Pedido nao localizado"));
+
+        //[autorização] Validar se o login pertence a esse pedido
+        if(!pedido.getComprador().getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
 
         //Validar se o pedido já foi entregue
         if (pedido.getStatus() != StatusPedido.ENTREGUE)

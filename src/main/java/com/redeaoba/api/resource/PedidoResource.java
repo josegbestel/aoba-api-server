@@ -7,6 +7,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -23,36 +25,41 @@ public class PedidoResource {
 
     @PostMapping("/carrinho")
     @ApiOperation("Requisita os itens, comprador e endereço e a API retorna um item completo com as infos do carrinho")
-    public ResponseEntity<PedidoTempModel> criarCarrinho(@Valid @RequestBody PedidoNovoModel pedidoNovoModel){
-        return ResponseEntity.ok(pedidoService.rideCart(pedidoNovoModel));
+    public ResponseEntity<PedidoTempModel> criarCarrinho(@Valid @RequestBody PedidoNovoModel pedidoNovoModel,
+                                                         @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(pedidoService.rideCart(pedidoNovoModel, userDetails.getUsername()));
     }
 
     //Criar pedido
     @PostMapping
     @ApiOperation("Cria um pedido")
-    public ResponseEntity<PedidoRealizadoModel> criarPedido(@Valid @RequestBody PedidoNovoModel pedidoNovoModel) throws InterruptedException {
-        return  ResponseEntity.ok(pedidoService.create(pedidoNovoModel));
+    public ResponseEntity<PedidoRealizadoModel> criarPedido(@Valid @RequestBody PedidoNovoModel pedidoNovoModel,
+                                                            @AuthenticationPrincipal UserDetails userDetails) throws InterruptedException {
+        return  ResponseEntity.ok(pedidoService.create(pedidoNovoModel, userDetails.getUsername()));
     }
 
     //Obter pedidos por comerciante
     @GetMapping("/comerciante/{id}")
     @ApiOperation("Obtem todos os pedidos a partir do id do comerciante")
-    public ResponseEntity<List<PedidoRealizadoModel>> obterPedidosComerciante(@PathVariable(value = "id") long id){
-        return ResponseEntity.ok(pedidoService.readByCompradorId(id));
+    public ResponseEntity<List<PedidoRealizadoModel>> obterPedidosComerciante(@PathVariable(value = "id") long id,
+                                                                              @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(pedidoService.readByCompradorId(id, userDetails.getUsername()));
     }
 
     //Obter respondidos por produtor
     @GetMapping("/respondidos/produtor/{id}")
     @ApiOperation("Obtem todos os pedidos respondidos a partir do id do produtor")
-    public ResponseEntity<List<PedidoRealizadoModel>> obterPedidosRespondidosProdutor(@PathVariable(value = "id") long id){
-        return ResponseEntity.ok(pedidoService.readRespondidosByProdutorId(id));
+    public ResponseEntity<List<PedidoRealizadoModel>> obterPedidosRespondidosProdutor(@PathVariable(value = "id") long id,
+                                                                                      @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(pedidoService.readRespondidosByProdutorId(id, userDetails.getUsername()));
     }
 
     //Obter novos por produtor
     @GetMapping("/novos/produtor/{id}")
     @ApiOperation("Obtem todos os pedidos novos a partir do id do produtor")
-    public ResponseEntity<List<PedidoProdutorNovoModel>> obterPedidosNovosProdutor(@PathVariable(value = "id") long id){
-        return ResponseEntity.ok((pedidoService.readNovosByProdutorId(id)));
+    public ResponseEntity<List<PedidoProdutorNovoModel>> obterPedidosNovosProdutor(@PathVariable(value = "id") long id,
+                                                                                   @AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok((pedidoService.readNovosByProdutorId(id, userDetails.getUsername())));
     }
 
     //Responder pedido
@@ -60,8 +67,9 @@ public class PedidoResource {
     @ApiOperation("Responde um pedido a partir do id")
     public ResponseEntity<Object> responderPedidoProdutor(@PathVariable(value = "pedidoId") long pedidoId,
                                                           @PathVariable(value = "produtorId") long produtorId,
-                                                          @RequestParam(value = "aceite") boolean aceite) throws InterruptedException {
-        pedidoService.updatePedidoResponder(pedidoId, produtorId, aceite);
+                                                          @RequestParam(value = "aceite") boolean aceite,
+                                                          @AuthenticationPrincipal UserDetails userDetails) throws InterruptedException {
+        pedidoService.updatePedidoResponder(pedidoId, produtorId, aceite, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 
@@ -71,8 +79,9 @@ public class PedidoResource {
     @ApiOperation("O Comerciante confirma ou não o item de opção alternativa com valor superior ao anterior")
     public ResponseEntity<Object> confirmarOpcaoAlternativa(@PathVariable(value = "pedidoId") long pedidoId,
                                                             @PathVariable(value = "itemId") long itemId,
-                                                            @RequestParam(value = "aceite") boolean aceite) throws InterruptedException {
-        pedidoService.confirmOpcaoAlternativa(pedidoId, itemId, aceite);
+                                                            @RequestParam(value = "aceite") boolean aceite,
+                                                            @AuthenticationPrincipal UserDetails userDetails) throws InterruptedException {
+        pedidoService.confirmOpcaoAlternativa(pedidoId, itemId, aceite, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 
@@ -95,8 +104,9 @@ public class PedidoResource {
 
     @PostMapping("/{pedidoId}/avaliar")
     public ResponseEntity<Object> avaliarPedido(@PathVariable(value = "pedidoId") long pedidoId,
-                                                @Valid @RequestBody AvaliacaoModel avaliacao){
-        pedidoService.avaliarPedido(pedidoId, avaliacao);
+                                                @Valid @RequestBody AvaliacaoModel avaliacao,
+                                                @AuthenticationPrincipal UserDetails userDetails){
+        pedidoService.avaliarPedido(pedidoId, avaliacao, userDetails.getUsername());
         return ResponseEntity.noContent().build();
     }
 }

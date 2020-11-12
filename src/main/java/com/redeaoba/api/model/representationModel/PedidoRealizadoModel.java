@@ -1,107 +1,120 @@
 package com.redeaoba.api.model.representationModel;
 
-import com.redeaoba.api.model.Pedido;
-import com.redeaoba.api.model.enums.StatusPedido;
+import com.redeaoba.api.model.*;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoRealizadoModel {
 
-    private long pedidoId;
-    private String nomeFantasiaComerciante;
-    private LocalDateTime dtRealizado;
-    private StatusPedido status;
-    private LocalDateTime dtConfirmado;
-    private LocalDateTime prazoEntrega;
-    private String telefoneComerciante;
-    private DetalhesPedidoRealizadoModel detalhes;
+    private float valorFrete;
+    private float valorTotal;
+    private List<ItemCarrinhoModel> itens = new ArrayList<>();
+    private List<DataEntrega> datasEntrega = new ArrayList<>();
+    private Comerciante comerciante;
+    private PedidoNovoModel requisicaoCriar;
 
-    public static PedidoRealizadoModel toModel(Pedido pedido){
-        PedidoRealizadoModel model = new PedidoRealizadoModel();
-        model.setPedidoId(pedido.getId());
-        model.setNomeFantasiaComerciante(pedido.getComprador().getNomeFantasia());
-        model.setDtRealizado(pedido.getDtCriacao());
-        model.setStatus(pedido.getStatus());
-        model.setDtConfirmado(pedido.getDtConfirmado());
-        model.setPrazoEntrega(pedido.getPrazoEntrega());
-        model.setTelefoneComerciante(pedido.getComprador().getTelefone());
-        model.setDetalhes(DetalhesPedidoRealizadoModel.toModel(pedido));
-
-        return model;
+    public float getValorFrete() {
+        return valorFrete;
     }
 
-    public static List<PedidoRealizadoModel> toModel(List<Pedido> pedidos){
-        List<PedidoRealizadoModel> models = new ArrayList<>();
-        pedidos.forEach(p -> models.add(PedidoRealizadoModel.toModel(p)));
-
-        return models;
+    public void setValorFrete(float valorFrete) {
+        this.valorFrete = valorFrete;
     }
 
-
-    public long getPedidoId() {
-        return pedidoId;
+    public float getValorTotal() {
+        return valorTotal;
     }
 
-    public void setPedidoId(long pedidoId) {
-        this.pedidoId = pedidoId;
+    public void setValorTotal(float valorTotal) {
+        this.valorTotal = valorTotal;
     }
 
-    public String getNomeFantasiaComerciante() {
-        return nomeFantasiaComerciante;
+    public List<ItemCarrinhoModel> getItens() {
+        return itens;
     }
 
-    public void setNomeFantasiaComerciante(String nomeFantasiaComerciante) {
-        this.nomeFantasiaComerciante = nomeFantasiaComerciante;
+    public void setItens(List<ItemCarrinhoModel> itens) {
+        this.itens = itens;
     }
 
-    public LocalDateTime getDtRealizado() {
-        return dtRealizado;
+    public void addItem(ItemCarrinhoModel item){
+        this.itens.add(item);
     }
 
-    public void setDtRealizado(LocalDateTime dtRealizado) {
-        this.dtRealizado = dtRealizado;
+    public List<DataEntrega> getDatasEntrega() {
+        return datasEntrega;
     }
 
-    public StatusPedido getStatus() {
-        return status;
+    public void setDatasEntrega(List<DataEntrega> datasEntrega) {
+        this.datasEntrega = datasEntrega;
     }
 
-    public void setStatus(StatusPedido status) {
-        this.status = status;
+    public void addDataEntrega(DataEntrega dataEntrega){
+        if(!existsDataEntrega(dataEntrega))
+            this.datasEntrega.add(dataEntrega);
     }
 
-    public LocalDateTime getDtConfirmado() {
-        return dtConfirmado;
+//    public void addDatasEntregas(List<DataEntrega> datasEntregas){
+//        //Adiciona apenas se não existir uma data dessa
+//        for(DataEntrega dtNova : datasEntregas){
+//            if(this.datasEntrega.size() > 0){
+//                if(existsDataEntrega(dtNova))
+//                    this.addDataEntrega(dtNova);
+//            }else
+//                this.datasEntrega.add(dtNova);
+//        }
+//    }
+
+    private boolean existsDataEntrega(DataEntrega dtNova){
+        for(DataEntrega dt : this.datasEntrega){
+            if(!dt.compare(dtNova)){
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void setDtConfirmado(LocalDateTime dtConfirmado) {
-        this.dtConfirmado = dtConfirmado;
+    public Comerciante getComerciante() {
+        return comerciante;
     }
 
-    public LocalDateTime getPrazoEntrega() {
-        return prazoEntrega;
+    public void setComerciante(Comerciante comerciante) {
+        this.comerciante = comerciante;
     }
 
-    public void setPrazoEntrega(LocalDateTime prazoEntrega) {
-        this.prazoEntrega = prazoEntrega;
+    public PedidoNovoModel getRequisicaoCriar() {
+        PedidoNovoModel requisicao = this.requisicaoCriar;
+        return requisicaoCriar;
     }
 
-    public String getTelefoneComerciante() {
-        return telefoneComerciante;
+    public void setRequisicaoCriar(PedidoNovoModel requisicaoCriar) {
+        this.requisicaoCriar = requisicaoCriar;
     }
 
-    public void setTelefoneComerciante(String telefoneComerciante) {
-        this.telefoneComerciante = telefoneComerciante;
+    static public List<PedidoRealizadoModel> toModel(List<Pedido> pedidos){
+        List<PedidoRealizadoModel> realizados = new ArrayList<>();
+        for (Pedido p : pedidos) {
+            PedidoRealizadoModel pt = PedidoRealizadoModel.toModel(p);
+            pt.setRequisicaoCriar(null);
+            realizados.add(pt);
+        }
+
+        return realizados;
     }
 
-    public DetalhesPedidoRealizadoModel getDetalhes() {
-        return detalhes;
-    }
+    static public PedidoRealizadoModel toModel(Pedido pedido){
+        PedidoRealizadoModel tmp = new PedidoRealizadoModel();
+        tmp.setRequisicaoCriar(PedidoNovoModel.toModel(pedido));
+        tmp.setValorFrete(pedido.getValorFrete());
+        tmp.setValorTotal(pedido.getValorTotal());
+        tmp.setComerciante(pedido.getComprador());
 
-    public void setDetalhes(DetalhesPedidoRealizadoModel detalhes) {
-        this.detalhes = detalhes;
+        for(ItemCarrinho i : pedido.getItensCarrinho()){
+            tmp.addItem(ItemCarrinhoModel.toModel(i));
+            tmp.addDataEntrega(i.getAnuncio().getDatasEntregas().get(0));
+        }
+        return tmp;
     }
 
 

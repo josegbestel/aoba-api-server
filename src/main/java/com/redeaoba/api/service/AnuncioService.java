@@ -1,5 +1,6 @@
 package com.redeaoba.api.service;
 
+import com.redeaoba.api.exception.AuthorizationException;
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.Anuncio;
@@ -40,8 +41,16 @@ public class AnuncioService {
     CategoriaProdutoRepository categoriaProdutoRepository;
 
     //CREATE
-    public Anuncio create(AnuncioModel anuncioModel){
+    public Anuncio create(AnuncioModel anuncioModel, String emailProdutor){
         Timestamp time = Timestamp.valueOf(LocalDateTime.now());
+
+        //[autorização] Caso não seja produtor
+        Produtor produtor = produtorRepository.findByEmail(emailProdutor).
+                orElseThrow(() -> new AuthorizationException());
+
+        //[autorização] Se o usuário do login for diferente do produtor do anuncio a ser criado
+        if(produtor.getId() != anuncioModel.getProdutorId())
+            throw new AuthorizationException();
 
         Optional<List<Anuncio>> anunciosExistentes = anuncioRepository
                 .findByProdutorIdAndProdutoId(anuncioModel.getProdutorId(), anuncioModel.getProdutoId());
@@ -57,8 +66,6 @@ public class AnuncioService {
         anuncioModel.setAtivo(true);
         anuncioModel.setDtCriacao(LocalDateTime.now());
         anuncioModel.setDtValidade(LocalDateTime.now().plusDays(7));
-        Produtor produtor = produtorRepository.findById(anuncioModel.getProdutorId())
-                .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
         Produto produto = produtoRepository.findById(anuncioModel.getProdutoId())
                 .orElseThrow(() -> new NotFoundException("Produto nao localizado"));
 
@@ -70,17 +77,30 @@ public class AnuncioService {
     }
 
     //READ
-    public Anuncio read(Long id){
+    public Anuncio read(Long id, String emailProdutor){
         Anuncio anuncio = anuncioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
+
+        //[autorização] Se existe esse produtor do login
+        Produtor produtor = produtorRepository.findByEmail(emailProdutor)
+                .orElseThrow(() -> new AuthorizationException());
+
+        //[autorização] Se o anúncio pertence ao produtor do login
+        if(produtor.getId() != anuncio.getProdutor().getId())
+            throw new AuthorizationException();
 
         return anuncio;
     }
 
     //READ POR PRODUTOR
-    public List<Anuncio> readByProdutor(Long produtorId){
+    public List<Anuncio> readByProdutor(Long produtorId, String emailProdutor){
         Produtor produtor = produtorRepository.findById(produtorId)
                 .orElseThrow(() -> new NotFoundException("Produtor nao localizado"));
+
+        //[autorização] Se o produtor do id for diferente do login
+        if(!produtor.getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
+
         List<Anuncio> anuncios = anuncioRepository.findByProdutorId(produtor.getId())
                 .orElseThrow(() -> new NotFoundException("Nao ha anuncios desse produtor"));
 
@@ -174,13 +194,13 @@ public class AnuncioService {
     }
 
     //UPDATE QTDE E VALOR
-    public void updateAnuncio(long id, int qtde, float valor){
-        System.out.println("id: " + id
-                + "\nqtde: " + qtde
-                + "\nvalor: " + valor);
-
+    public void updateAnuncio(long id, int qtde, float valor, String emailProdutor){
         Anuncio anuncio = anuncioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
+
+        //[autorização] Se o produtor não for dono do anuncio que está sendo editado
+        if(!anuncio.getProdutor().getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
 
         //Validar se anuncio está REMOVIDO ou DESATUALIZADO
         if(anuncio.getStatus() == StatusAnuncio.REMOVIDO || anuncio.getStatus() == StatusAnuncio.DESATUALIZADO)
@@ -219,36 +239,54 @@ public class AnuncioService {
     }
 
     //UPDATE VENCIMENTO
-    public Anuncio updateVencimento(Long id, LocalDateTime validade){
+    public Anuncio updateVencimento(Long id, LocalDateTime validade, String emailProdutor){
         Anuncio anuncio = anuncioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
+
+        //[autorização] Se o produtor não for dono do anuncio que está sendo editado
+        if(!anuncio.getProdutor().getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
 
         anuncio.setDtValidade(validade);
         return anuncioRepository.save(anuncio);
     }
 
     //DESATIVAR
-    public void disable(Long id){
+    public void disable(Long id, String emailProdutor){
         Anuncio anuncio = anuncioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
+
+        //[autorização] Se o produtor não for dono do anuncio que está sendo editado
+        if(!anuncio.getProdutor().getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
+
         anuncio.setAtivo(false);
         anuncio.setDtValidade(anuncio.getDtValidade().isAfter(LocalDateTime.now()) ? anuncio.getDtValidade() : LocalDateTime.now());
         anuncioRepository.save(anuncio);
     }
 
     //ATIVAR
-    public void enable(Long id){
+    public void enable(Long id, String emailProdutor){
         Anuncio anuncio = anuncioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
+
+        //[autorização] Se o produtor não for dono do anuncio que está sendo editado
+        if(!anuncio.getProdutor().getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
+
         anuncio.setAtivo(true);
         anuncio.setDtValidade(LocalDateTime.now().plusDays(7));
         anuncioRepository.save(anuncio);
     }
 
     //DELETAR
-    public void delete(Long id){
+    public void delete(Long id, String emailProdutor){
         Anuncio anuncio = anuncioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Anuncio nao localizado"));
+
+        //[autorização] Se o produtor não for dono do anuncio que está sendo editado
+        if(!anuncio.getProdutor().getEmail().equals(emailProdutor))
+            throw new AuthorizationException();
 
         anuncio.setStatus(StatusAnuncio.REMOVIDO);
         anuncio.setAtivo(false);

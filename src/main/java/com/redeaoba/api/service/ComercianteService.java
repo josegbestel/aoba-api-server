@@ -1,5 +1,6 @@
 package com.redeaoba.api.service;
 
+import com.redeaoba.api.exception.AuthorizationException;
 import com.redeaoba.api.exception.DomainException;
 import com.redeaoba.api.exception.NotFoundException;
 import com.redeaoba.api.model.Comerciante;
@@ -49,17 +50,26 @@ public class ComercianteService {
     }
 
     //read enderecos
-    public List<Endereco> readEnderecos(Long id){
+    public List<Endereco> readEnderecos(Long id, String emailComerciante){
         Comerciante comerciante = comercianteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
+
+        //[autorização] Verificar se o id informado é do comerciante do login
+        if(!comerciante.getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
 
         return comerciante.getEnderecos();
     }
 
     //update endereco
-    public List<Endereco> createEndereco(Long id, Endereco endereco){
+    public List<Endereco> createEndereco(Long id, Endereco endereco, String emailComerciante){
         Comerciante comerciante = comercianteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
+
+        //[autorização] Verificar se o id informado é do comerciante do login
+        if(!comerciante.getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
+
         System.out.println("qtde endereços: " + comerciante.getEnderecos().size());
         comerciante.addEndereco(endereco);
         comerciante = comercianteRepository.save(comerciante);
@@ -67,9 +77,14 @@ public class ComercianteService {
     }
 
     //delete endereco
-    public void deleteEndereco(Long id, Long enderecoId){
+    public void deleteEndereco(Long id, Long enderecoId, String emailComerciante){
         Comerciante comerciante = comercianteRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
+
+        //[autorização] Verificar se o id informado é do comerciante do login
+        if(!comerciante.getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
+
         if(comerciante.removerEndereco(enderecoId)){
             throw new NotFoundException("Endereco nao localizado");
         }
@@ -79,10 +94,15 @@ public class ComercianteService {
 
 
     //delete
-    public void delete(Long id){
-        if(comercianteRepository.existsById(id))
-            comercianteRepository.deleteById(id);
-        else
-            throw new NotFoundException("Comerciante nao localizado");
+    public void delete(Long id, String emailComerciante){
+        Comerciante comerciante = comercianteRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Comerciante nao localizado"));
+
+        //[autorização] Verificar se o id informado é do comerciante do login
+        if(!comerciante.getEmail().equals(emailComerciante))
+            throw new AuthorizationException();
+
+        //TODO: Removever infos pessoais e desativas NUNCA EXCLUIR
+        comercianteRepository.deleteById(id);
     }
 }
