@@ -11,17 +11,25 @@ import com.redeaoba.api.model.enums.StatusItem;
 import com.redeaoba.api.model.enums.StatusPedido;
 import com.redeaoba.api.model.representationModel.*;
 import com.redeaoba.api.repository.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class PedidoService {
+
+    private static final Logger logger = LoggerFactory.getLogger(PedidoService.class);
 
     @Autowired
     PedidoRepository pedidoRepository;
@@ -38,8 +46,8 @@ public class PedidoService {
     @Autowired
     AnuncioRepository anuncioRepository;
 
-//    @Autowired
-//    AsyncPedidoService asyncPedidoService;
+    @Autowired
+    AsyncPedidoService asyncPedidoService;
 
     @Autowired
     ItemCarrinhoRepository itemCarrinhoRepository;
@@ -121,7 +129,7 @@ public class PedidoService {
         pedido = pedidoRepository.save(pedido);
 
         //TODO: chama uma função para qnd vencer e n tiver resposta
-//        asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
+        asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
 
         //TODO: Enviar notificação para produtores
 
@@ -305,7 +313,7 @@ public class PedidoService {
         }
         pedidoRepository.save(pedido);
         //TODO: Chamar método async para acompanhar prazo
-//        asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
+        asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
     }
 
     //Entregar pedido
@@ -437,13 +445,13 @@ public class PedidoService {
         //Chamar função async
 //        if(!aConfirmar)
 //            //TODO: Chamar função async para acompanhar prazo
-//            asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
+            asyncPedidoService.acompanharPrazoResposta(pedido.getId(), pedido.getPrazoResposta());
 
         return pedido;
     }
 
     //[interna] Buscar opção alternativa
-    public void buscarOpcaoItem(Pedido pedido, ItemCarrinho item) throws InterruptedException {
+    private void buscarOpcaoItem(Pedido pedido, ItemCarrinho item) throws InterruptedException {
 
         List<Anuncio> anuncios;
         List<ItemCarrinho> itensProduto;
@@ -595,6 +603,48 @@ public class PedidoService {
 
     }
 
+    //[interna] Função async para acompanhar o prazo
+    @Async
+    private void acompanharPrazoResposta(long pedidoId, LocalDateTime prazo) throws InterruptedException {
+        LocalDateTime now = LocalDateTime.now();
+
+        long millis = ChronoUnit.MILLIS.between(now, prazo);
+
+        LocalDateTime prazoDateTime = LocalDateTime.now().plusSeconds(millis/1000);
+        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") => prazo: " + prazoDateTime + " [" + millis + " millis]");
+        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") =>  Inicio da espera");
+        Thread.sleep(millis);
+
+//        Hibernate.initialize(Pedido.class);
+
+        //Lógica do pedido aqui
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow((() -> new DomainException("Houve problema ao consultar o pedido " + pedidoId)));
+
+        for (ItemCarrinho i : pedido.getItensPendentes()) {
+            //Se o prazo do item for < do que agora
+            if(i.getDtPrazoResposta().isBefore(LocalDateTime.now())){
+                //Verifica se item teve resposta
+                if(i.getDtResposta() == null){
+                    //Item sem resposta
+                    if(pedido.getOpcaoAlternativa() == OpcaoAlternativa.ACEITAR_SUGESTAO){
+                        //Buscar alternativa
+//                        pedidoService.buscarOpcaoItem(pedido, i);
+                    }else{
+                        //Cancelar item
+                        i.setStatus(StatusItem.CANCELADO);
+                    }
+                }
+            }
+
+        }
+
+        //Persistir em banco
+        pedido.refreshStatus();
+        pedidoRepository.save(pedido);
+
+        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") => fim da espera");
+    }
 
 
 
