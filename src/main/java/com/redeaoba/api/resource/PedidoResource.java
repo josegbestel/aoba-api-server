@@ -41,7 +41,7 @@ public class PedidoResource {
     //Obter pedidos por comerciante
     @GetMapping("/comerciante/{id}")
     @ApiOperation("Obtem todos os pedidos a partir do id do comerciante")
-    public ResponseEntity<List<PedidoRealizadoModel>> obterPedidosComerciante(@PathVariable(value = "id") long id,
+    public ResponseEntity<List<PedidoRealizadoComercianteModel>> obterPedidosComerciante(@PathVariable(value = "id") long id,
                                                                               @AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(pedidoService.readByCompradorId(id, userDetails.getUsername()));
     }

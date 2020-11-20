@@ -137,7 +137,7 @@ public class PedidoService {
     }
 
     //Obter por Comerciante
-    public List<PedidoRealizadoModel> readByCompradorId(long compradorId, String emailComerciante){
+    public List<PedidoRealizadoComercianteModel> readByCompradorId(long compradorId, String emailComerciante){
         Comerciante comerciante = comercianteRepository.findById(compradorId)
                 .orElseThrow(() -> new NotFoundException("Comerciante não localizado"));
 
@@ -152,7 +152,7 @@ public class PedidoService {
             p.setItensCarrinho(p.getItensCarrinhoAtivos());
         }
 
-        return PedidoRealizadoModel.toModel(pedidos);
+        return PedidoRealizadoComercianteModel.toModel(pedidos);
     }
 
     //Obter respondidos por Produtor
