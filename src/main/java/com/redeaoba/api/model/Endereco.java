@@ -85,7 +85,7 @@ public class Endereco implements Serializable {
     }
 
     public String getComplemento() {
-        return complemento;
+        return complemento == null ? "" : complemento;
     }
 
     public void setComplemento(String complemento) {
