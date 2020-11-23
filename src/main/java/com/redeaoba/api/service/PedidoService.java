@@ -180,7 +180,13 @@ public class PedidoService {
             p.setItensCarrinho(p.getItensCarrinhoAtivos());
         }
 
+
         return PedidoRealizadoModel.toModel(pedidosProdutor);
+
+//        if(pedidosProdutor.size() > 0)
+//            return PedidoRealizadoModel.toModel(pedidosProdutor);
+//
+//        return null;
     }
 
     //Obter novos por Produtor
