@@ -200,8 +200,10 @@ public class PedidoService {
         //Filtrar apenas casos não respondidos
         List<Pedido> pedidos = new ArrayList<>();
         for (Pedido p : produtor.getPedidos()){
-            if(p.getItensCarrinhoByProdutorId(produtorId).get(0).getDtResposta() == null){
-                pedidos.add(p);
+            if(p.getItensCarrinhoByProdutorId(produtorId).size() > 0){
+                if(p.getItensCarrinhoByProdutorId(produtorId).get(0).getDtResposta() == null){
+                    pedidos.add(p);
+                }
             }
         }
 
