@@ -170,8 +170,10 @@ public class PedidoService {
         List<Pedido> pedidosProdutor = new ArrayList<>();
         for (Pedido p : pedidos){
             p.setItensCarrinho(p.getItensCarrinhoByProdutorId(produtorId));
-            if(p.getItensCarrinho().get(0).getDtResposta() != null){
-                pedidosProdutor.add(p);
+            if(p.getItensCarrinho().size() >0){
+                if(p.getItensCarrinho().get(0).getDtResposta() != null){
+                    pedidosProdutor.add(p);
+                }
             }
         }
 
@@ -180,13 +182,10 @@ public class PedidoService {
             p.setItensCarrinho(p.getItensCarrinhoAtivos());
         }
 
+        if(pedidosProdutor.size() > 0)
+            return PedidoRealizadoModel.toModel(pedidosProdutor);
 
-        return PedidoRealizadoModel.toModel(pedidosProdutor);
-
-//        if(pedidosProdutor.size() > 0)
-//            return PedidoRealizadoModel.toModel(pedidosProdutor);
-//
-//        return null;
+        return null;
     }
 
     //Obter novos por Produtor
