@@ -2,6 +2,7 @@ package com.redeaoba.api.model.representationModel;
 
 import com.redeaoba.api.model.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,9 @@ public class PedidoRealizadoModel {
 
     private float valorFrete;
     private float valorTotal;
+    private LocalDate dtRealizado;
+    private LocalDate dtConfirmado;
+    private LocalDate dtEntregaRealizada;
     private List<ItemCarrinhoModel> itens = new ArrayList<>();
     private List<DataEntrega> datasEntrega = new ArrayList<>();
     private Comerciante comerciante;
@@ -55,17 +59,6 @@ public class PedidoRealizadoModel {
             this.datasEntrega.add(dataEntrega);
     }
 
-//    public void addDatasEntregas(List<DataEntrega> datasEntregas){
-//        //Adiciona apenas se não existir uma data dessa
-//        for(DataEntrega dtNova : datasEntregas){
-//            if(this.datasEntrega.size() > 0){
-//                if(existsDataEntrega(dtNova))
-//                    this.addDataEntrega(dtNova);
-//            }else
-//                this.datasEntrega.add(dtNova);
-//        }
-//    }
-
     private boolean existsDataEntrega(DataEntrega dtNova){
         for(DataEntrega dt : this.datasEntrega){
             if(!dt.compare(dtNova)){
@@ -92,6 +85,30 @@ public class PedidoRealizadoModel {
         this.requisicaoCriar = requisicaoCriar;
     }
 
+    public LocalDate getDtRealizado() {
+        return dtRealizado;
+    }
+
+    public void setDtRealizado(LocalDate dtRealizado) {
+        this.dtRealizado = dtRealizado;
+    }
+
+    public LocalDate getDtConfirmado() {
+        return dtConfirmado;
+    }
+
+    public void setDtConfirmado(LocalDate dtConfirmado) {
+        this.dtConfirmado = dtConfirmado;
+    }
+
+    public LocalDate getDtEntregaRealizada() {
+        return dtEntregaRealizada;
+    }
+
+    public void setDtEntregaRealizada(LocalDate dtEntregaRealizada) {
+        this.dtEntregaRealizada = dtEntregaRealizada;
+    }
+
     static public List<PedidoRealizadoModel> toModel(List<Pedido> pedidos){
         List<PedidoRealizadoModel> realizados = new ArrayList<>();
         for (Pedido p : pedidos) {
@@ -109,6 +126,9 @@ public class PedidoRealizadoModel {
         tmp.setValorFrete(pedido.getValorFrete());
         tmp.setValorTotal(pedido.getValorTotal());
         tmp.setComerciante(pedido.getComprador());
+        tmp.setDtRealizado(pedido.getDtCriacao().toLocalDate());
+        tmp.setDtConfirmado(pedido.getDtConfirmado().toLocalDate());
+        tmp.setDtEntregaRealizada(pedido.getDtEntrega().toLocalDate());
 
         for(ItemCarrinho i : pedido.getItensCarrinho()){
             tmp.addItem(ItemCarrinhoModel.toModel(i));
