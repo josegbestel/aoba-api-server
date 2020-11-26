@@ -1,6 +1,7 @@
 package com.redeaoba.api.model.representationModel;
 
 import com.redeaoba.api.model.*;
+import com.redeaoba.api.util.CustomDate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -127,8 +128,8 @@ public class PedidoRealizadoModel {
         tmp.setValorTotal(pedido.getValorTotal());
         tmp.setComerciante(pedido.getComprador());
         tmp.setDtRealizado(pedido.getDtCriacao().toLocalDate());
-        tmp.setDtConfirmado(pedido.getDtConfirmado().toLocalDate());
-        tmp.setDtEntregaRealizada(pedido.getDtEntrega().toLocalDate());
+        tmp.setDtConfirmado(pedido.getDtConfirmado() != null ? pedido.getDtConfirmado().toLocalDate() : null);
+        tmp.setDtEntregaRealizada(pedido.getDtEntrega() != null ? pedido.getDtEntrega().toLocalDate() : null);
 
         for(ItemCarrinho i : pedido.getItensCarrinho()){
             tmp.addItem(ItemCarrinhoModel.toModel(i));
