@@ -1,7 +1,7 @@
 package com.redeaoba.api.model.representationModel;
 
 import com.redeaoba.api.model.*;
-import com.redeaoba.api.util.CustomDate;
+import com.redeaoba.api.model.enums.StatusPedido;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -11,13 +11,14 @@ public class PedidoRealizadoModel {
 
     private float valorFrete;
     private float valorTotal;
-    private LocalDate dtRealizado;
-    private LocalDate dtConfirmado;
-    private LocalDate dtEntregaRealizada;
     private List<ItemCarrinhoModel> itens = new ArrayList<>();
     private List<DataEntrega> datasEntrega = new ArrayList<>();
     private Comerciante comerciante;
     private PedidoNovoModel requisicaoCriar;
+    private LocalDate dtRealizado;
+    private LocalDate dtConfirmado;
+    private LocalDate dtEntrega;
+    private StatusPedido status;
 
     public float getValorFrete() {
         return valorFrete;
@@ -102,12 +103,20 @@ public class PedidoRealizadoModel {
         this.dtConfirmado = dtConfirmado;
     }
 
-    public LocalDate getDtEntregaRealizada() {
-        return dtEntregaRealizada;
+    public LocalDate getDtEntrega() {
+        return dtEntrega;
     }
 
-    public void setDtEntregaRealizada(LocalDate dtEntregaRealizada) {
-        this.dtEntregaRealizada = dtEntregaRealizada;
+    public void setDtEntrega(LocalDate dtEntrega) {
+        this.dtEntrega = dtEntrega;
+    }
+
+    public StatusPedido getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusPedido status) {
+        this.status = status;
     }
 
     static public List<PedidoRealizadoModel> toModel(List<Pedido> pedidos){
@@ -129,7 +138,8 @@ public class PedidoRealizadoModel {
         tmp.setComerciante(pedido.getComprador());
         tmp.setDtRealizado(pedido.getDtCriacao().toLocalDate());
         tmp.setDtConfirmado(pedido.getDtConfirmado() != null ? pedido.getDtConfirmado().toLocalDate() : null);
-        tmp.setDtEntregaRealizada(pedido.getDtEntrega() != null ? pedido.getDtEntrega().toLocalDate() : null);
+        tmp.setDtEntrega(pedido.getDtEntrega() != null ? pedido.getDtEntrega().toLocalDate() : null);
+        tmp.setStatus(pedido.getStatus());
 
         for(ItemCarrinho i : pedido.getItensCarrinho()){
             tmp.addItem(ItemCarrinhoModel.toModel(i));

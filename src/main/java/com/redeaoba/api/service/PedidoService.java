@@ -335,7 +335,7 @@ public class PedidoService {
         for (ItemCarrinho i : pedido.getItensCarrinho()) {
             if(i.getStatus() == StatusItem.PENDENTE){
                 i.setStatus(StatusItem.FINALIZADO);
-                i.setDtResposta(now);
+//                i.setDtResposta(now);
             }
         }
 
