@@ -10,6 +10,7 @@ public class ItemDetalhePedidoRealizadoModel {
     private String nomeItem;
     private String foto;
     private int qtde;
+    private float valor;
     private float total;
     private DiaSemana entrega;
     private StatusItem statusItem;
@@ -20,6 +21,7 @@ public class ItemDetalhePedidoRealizadoModel {
         model.setNomeItem(item.getAnuncio().getProduto().getNome());
         model.setFoto(item.getAnuncio().getFotos().get(0));
         model.setQtde(item.getQuantidade());
+        model.setValor(item.getValorUnitario());
         model.setTotal(item.getValorTotal());
         model.setEntrega(item.getAnuncio().getDatasEntregas().get(0).getDiaSemana());
         model.setStatusItem(item.getStatus());
@@ -65,6 +67,14 @@ public class ItemDetalhePedidoRealizadoModel {
 
     public void setTotal(float total) {
         this.total = total;
+    }
+
+    public float getValor() {
+        return valor;
+    }
+
+    public void setValor(float valor) {
+        this.valor = valor;
     }
 
     public DiaSemana getEntrega() {

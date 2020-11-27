@@ -39,6 +39,19 @@ public class ItemCarrinho implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     private Pedido pedido;
 
+    public float getValorUnitario(){
+        float vlr = anuncio.getValor();
+        DecimalFormat df = new DecimalFormat();
+        df.setMaximumFractionDigits(2);
+
+        String number = df.format(vlr);
+        number = number.replace("\\.", "");
+        number = number.replace(",", ".");
+        vlr = Float.parseFloat(number);
+
+        return vlr;
+    }
+
     public float getValorTotal(){
         float vlrTotal = anuncio.getValor() * this.quantidade;
         DecimalFormat df = new DecimalFormat();
