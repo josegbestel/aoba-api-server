@@ -137,7 +137,15 @@ public class PedidoRealizadoModel {
         tmp.setValorTotal(pedido.getValorTotal());
         tmp.setComerciante(pedido.getComprador());
         tmp.setDtRealizado(pedido.getDtCriacao().toLocalDate());
-        tmp.setDtConfirmado(pedido.getDtConfirmado() != null ? pedido.getDtConfirmado().toLocalDate() : null);
+
+        if(pedido.getItensCarrinho().size() >0){
+            ItemCarrinho item = pedido.getItensCarrinho().get(0);
+            if(item.getDtResposta() != null){
+                tmp.setDtConfirmado(item.getDtResposta().toLocalDate());
+            }
+        }
+
+//        tmp.setDtConfirmado(pedido.getDtConfirmado() != null ? pedido.getDtConfirmado().toLocalDate() : null);
         tmp.setDtEntrega(pedido.getDtEntrega() != null ? pedido.getDtEntrega().toLocalDate() : null);
         tmp.setStatus(pedido.getStatus());
 
