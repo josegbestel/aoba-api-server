@@ -45,44 +45,44 @@ public class AsyncPedidoService {
 
     @Async
     public void acompanharPrazoResposta(long pedidoId, LocalDateTime prazo) throws InterruptedException {
-        LocalDateTime now = LocalDateTime.now();
-
-        long millis = ChronoUnit.MILLIS.between(now, prazo);
-
-        LocalDateTime prazoDateTime = LocalDateTime.now().plusSeconds(millis/1000);
-        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") => prazo: " + prazoDateTime + " [" + millis + " millis]");
-        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") =>  Inicio da espera");
-        Thread.sleep(millis);
-
-//        Hibernate.initialize(Pedido.class);
-
-        //Lógica do pedido aqui
-        Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow((() -> new DomainException("Houve problema ao consultar o pedido " + pedidoId)));
-
-        for (ItemCarrinho i : pedido.getItensPendentes()) {
-            //Se o prazo do item for < do que agora
-            if(i.getDtPrazoResposta().isBefore(LocalDateTime.now())){
-                //Verifica se item teve resposta
-                if(i.getDtResposta() == null){
-                    //Item sem resposta
-                    if(pedido.getOpcaoAlternativa() == OpcaoAlternativa.ACEITAR_SUGESTAO){
-                        //Buscar alternativa
-                        buscarOpcaoItem(pedido, i);
-                    }else{
-                        //Cancelar item
-                        i.setStatus(StatusItem.CANCELADO);
-                    }
-                }
-            }
-
-        }
-
-        //Persistir em banco
-        pedido.refreshStatus();
-        pedidoRepository.save(pedido);
-
-        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") => fim da espera");
+//        LocalDateTime now = LocalDateTime.now();
+//
+//        long millis = ChronoUnit.MILLIS.between(now, prazo);
+//
+//        LocalDateTime prazoDateTime = LocalDateTime.now().plusSeconds(millis/1000);
+//        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") => prazo: " + prazoDateTime + " [" + millis + " millis]");
+//        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") =>  Inicio da espera");
+//        Thread.sleep(millis);
+//
+////        Hibernate.initialize(Pedido.class);
+//
+//        //Lógica do pedido aqui
+//        Pedido pedido = pedidoRepository.findById(pedidoId)
+//                .orElseThrow((() -> new DomainException("Houve problema ao consultar o pedido " + pedidoId)));
+//
+//        for (ItemCarrinho i : pedido.getItensPendentes()) {
+//            //Se o prazo do item for < do que agora
+//            if(i.getDtPrazoResposta().isBefore(LocalDateTime.now())){
+//                //Verifica se item teve resposta
+//                if(i.getDtResposta() == null){
+//                    //Item sem resposta
+//                    if(pedido.getOpcaoAlternativa() == OpcaoAlternativa.ACEITAR_SUGESTAO){
+//                        //Buscar alternativa
+//                        buscarOpcaoItem(pedido, i);
+//                    }else{
+//                        //Cancelar item
+//                        i.setStatus(StatusItem.CANCELADO);
+//                    }
+//                }
+//            }
+//
+//        }
+//
+//        //Persistir em banco
+//        pedido.refreshStatus();
+//        pedidoRepository.save(pedido);
+//
+//        logger.info("acompanharPrazoResposta (pedido: " + pedidoId + ") => fim da espera");
     }
 
     //[interna] Buscar opção alternativa
