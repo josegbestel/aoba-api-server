@@ -44,31 +44,35 @@ public class ProdutoService {
         List<Produto> produtos = new ArrayList<>();
 
         for(ProdutoModel pm : produtosModel){
-            if(!produtoRepository.existsByNome(pm.getNome())){
-                Optional<CategoriaProduto> categoria;
-                if(pm.getCategoriaId() == 0)
-                    categoria = categoriaProdutoRepository.findByNome(pm.getCategoriaNome());
-                else
-                    categoria = categoriaProdutoRepository.findById(pm.getCategoriaId());
+            Optional<CategoriaProduto> categoria;
+            if(pm.getCategoriaId() == 0)
+                categoria = categoriaProdutoRepository.findByNome(pm.getCategoriaNome());
+            else
+                categoria = categoriaProdutoRepository.findById(pm.getCategoriaId());
 
-                if(categoria.isPresent()){
-                    System.out.println("Achou a categoria " + categoria.get().getNome());
-                    Produto produto = new Produto();
-                    produto.setNome(pm.getNome());
-                    produto.setFoto(pm.getFoto());
-                    produto.setCategoria(categoria.get());
-                    produtos.add(produtoRepository.save(produto));
-                }else
-                    System.out.println("NÃO achou a categoria "
-                            + pm.getCategoriaNome() + " "
-                            + pm.getCategoriaId() + "("
-                            + pm.getNome() + ")");
-            }
+            if(categoria.isPresent()){
+                System.out.println("Achou a categoria " + categoria.get().getNome());
+                Produto produto = new Produto();
+                produto.setNome(pm.getNome());
+                produto.setFoto(pm.getFoto());
+                produto.setCategoria(categoria.get());
+
+                //Se ja existir, instanciar o id
+                Optional<Produto> existente = produtoRepository.findByNome(pm.getNome());
+                if(existente.isPresent()){
+                    produto.setId(existente.get().getId());
+                }
+                produtos.add(produtoRepository.save(produto));
+            }else
+                System.out.println("NÃO achou a categoria "
+                        + pm.getCategoriaNome() + " "
+                        + pm.getCategoriaId() + "("
+                        + pm.getNome() + ")");
+//            }
         }
-        if(produtos.size() != 0)
-            return produtos;
+        return produtos;
 
-        throw new NotFoundException("Nenhum produto foi cadastrado pois estes ja existem no sistema ou a categoria esta invalida");
+//        throw new NotFoundException("Nenhum produto foi cadastrado pois estes ja existem no sistema ou a categoria esta invalida");
     }
 
     //READ BY ID

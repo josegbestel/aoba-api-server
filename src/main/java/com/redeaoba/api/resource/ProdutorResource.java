@@ -25,7 +25,7 @@ public class ProdutorResource {
     @GetMapping("/login")
     @ApiOperation("Metodo para realizar o login e obter as informações do profissional")
     public ResponseEntity<Produtor> login(@AuthenticationPrincipal UserDetails userDetails){
-        System.out.println(userDetails.getUsername() + " : " + userDetails.getPassword());
+        System.out.println("/login -> usuario logando: " + userDetails.getUsername());
         return ResponseEntity.ok(produtorService.readByEmail(userDetails.getUsername()));
     }
 
